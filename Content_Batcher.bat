@@ -3,7 +3,7 @@ SETLOCAL EnableExtensions EnableDelayedExpansion
 
 REM Get the top-level directory of the current repository
 FOR /F "tokens=*" %%i IN ('git rev-parse --show-toplevel') DO SET "repoRoot=%%i"
-SET "contentPath=%repoRoot%\GameA_Prototype\Content"
+SET "contentPath=%repoRoot%\Content"
 SET "contentPath=!contentPath:\=/!"
 
 CD /D "%repoRoot%"
