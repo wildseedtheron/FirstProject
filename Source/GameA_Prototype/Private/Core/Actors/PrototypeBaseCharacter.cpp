@@ -111,7 +111,7 @@ UEnhancedInputLocalPlayerSubsystem* APrototypeBaseCharacter::GetInputSubsystem()
 
 void APrototypeBaseCharacter::PossessedBy(AController* NewController)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Pawn is possessed by: %s"), NewController);
+	UE_LOG(LogTemp, Warning, TEXT("Pawn is possessed by: %s"), *NewController->GetHumanReadableName());
 	Super::PossessedBy(NewController);
 
 	if (AbilitySystemComponent)
@@ -145,8 +145,8 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
-			//UE_LOG(LogTemp, Warning, TEXT("Ability %s bound to InputAction %s"), Action.AbilityInputID, *Action.InputTag.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("Ability %s bound to InputAction %s"), *UEnum::GetValueAsString(Action.AbilityInputID), *Action.InputTag.ToString());
 
 			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.AbilityInputID);
 			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.AbilityInputID);
