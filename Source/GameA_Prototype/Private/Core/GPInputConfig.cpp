@@ -4,6 +4,7 @@
 #include "Core/PrototypeData.h"
 #include "Core/GPInputConfig.h"
 #include "GPLogChannels.h"
+#include "Core/Abilities/PrototypeGameplayAbility.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GPInputConfig)
 

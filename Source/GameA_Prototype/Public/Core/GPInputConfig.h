@@ -10,6 +10,7 @@
 
 class UInputAction;
 struct FGameplayTag;
+class UPrototypeGameplayAbility;
 
 /**
  * FTaggedInputAction
@@ -23,7 +24,10 @@ struct FTaggedInputAction
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	const UInputAction* InputAction = nullptr;
+	TObjectPtr<const UInputAction> InputAction = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+	EPrototypeAbilityInputID AbilityInputTag;
 
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
@@ -41,7 +45,6 @@ public:
 	// Returns the first Input Action associated with a given tag.
 	const UInputAction* FindInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound) const;
 
-//public:
 	// List of input actions used by the owner. These input actions are mapped to a gameplay tag and must be manually bound.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
 	TArray<FTaggedInputAction> TaggedInputActions;
