@@ -5,14 +5,12 @@
 #include "CoreMinimal.h"
 #include "Core/PrototypeData.h"
 #include "Abilities/GameplayAbility.h"
-//#include "InputMappingContext.h"
-//#include "InputAction.h"
 #include "PrototypeGameplayAbility.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract, HideCategories = Input)
 class GAMEA_PROTOTYPE_API UPrototypeGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
@@ -22,9 +20,5 @@ public:
 
 	// Abilities will activate when input is pressed
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	EPrototypeAbilityInputID AbilityInputID{ EPrototypeAbilityInputID::None };
-
-	// Abilities will activate when input is pressed
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	FGameplayTag InputTag{ FGameplayTag::EmptyTag };
+	EAbilityInputID AbilityInputID{ EAbilityInputID::None };
 };

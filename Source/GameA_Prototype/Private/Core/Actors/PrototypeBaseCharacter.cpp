@@ -134,40 +134,23 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	//Make sure to set your input component class in the InputSettings->DefaultClasses
 	check(PlayerInputComponent);
 
-
-	if (InputConfig != nullptr)
-	{
-		UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-		for (const FTaggedInputAction& Action : InputConfig->TaggedInputActions)
-		{
-			if (Action.InputAction && Action.InputTag.IsValid())
-			{
-				if (*Action.InputTag.ToString() == FString(TEXT("InputTag.Ability.Jump")))
-				{
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::Start_Jump);
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::Stop_Jump);
-					UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
-				}
-
-				if (*Action.InputTag.ToString() == FString(TEXT("InputTag.Ability.Punch")))
-				{
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::Start_Punch);
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::Stop_Punch);
-					UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
-				}
-
-				if (*Action.InputTag.ToString() == FString(TEXT("InputTag.Ability.Kick")))
-				{
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::Start_Kick);
-					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::Stop_Kick);
-					UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
-				}
-			}
-		}
-	}
-	else
+	if (InputConfig == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InputConfig is null"));
+		return;
+	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	for (const FTaggedInputAction& Action : InputConfig->TaggedInputActions)
+	{
+		if (Action.InputAction && Action.InputTag.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("Ability %s bound to InputAction %s"), Action.AbilityInputID, *Action.InputTag.ToString());
+
+			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.AbilityInputID);
+			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.AbilityInputID);
+		}
 	}
 }
 
@@ -189,8 +172,8 @@ void APrototypeBaseCharacter::OnRep_PlayerState()
 		"Confirm",
 		"Cancel",
 		"PrototypeAbilityInputID",
-		static_cast<int32>(EPrototypeAbilityInputID::Confirm),
-		static_cast<int32>(EPrototypeAbilityInputID::Cancel)
+		static_cast<int32>(EAbilityInputID::Confirm),
+		static_cast<int32>(EAbilityInputID::Cancel)
 	);
 
 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
@@ -207,57 +190,6 @@ void APrototypeBaseCharacter::HandleHealthChanged(float DeltaValue, const FGamep
 	{
 		OnHealthChanged(DeltaValue, EventTags);
 	}
-}
-
-void APrototypeBaseCharacter::SendLocalInputToASC(bool bIsPressed, const EPrototypeAbilityInputID AbilityInputID)
-{
-	if (!AbilitySystemComponent) { UKismetSystemLibrary::PrintString(this, "We dont have a valid ASC"); return; }
-
-	if (bIsPressed)
-	{
-		UKismetSystemLibrary::PrintString(this, "We Are Pressing Our Input");
-		AbilitySystemComponent->AbilityLocalInputPressed(static_cast<int32>(AbilityInputID));
-	}
-	else
-	{
-		UKismetSystemLibrary::PrintString(this, "We Are Releasing Our Input");
-		AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
-	}
-}
-
-void APrototypeBaseCharacter::Start_Jump(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(true, EPrototypeAbilityInputID::Jump);
-}
-
-void APrototypeBaseCharacter::Stop_Jump(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(false, EPrototypeAbilityInputID::Jump);
-}
-
-void APrototypeBaseCharacter::Start_Punch(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(true, EPrototypeAbilityInputID::Punch);
-}
-
-void APrototypeBaseCharacter::Stop_Punch(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(false, EPrototypeAbilityInputID::Punch);
-}
-
-void APrototypeBaseCharacter::Start_Kick(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(true, EPrototypeAbilityInputID::Kick);
-}
-
-void APrototypeBaseCharacter::Stop_Kick(const FInputActionValue& InputActionValue)
-{
-	SendLocalInputToASC(false, EPrototypeAbilityInputID::Kick);
-}
-
-void APrototypeBaseCharacter::HandleFireWeaponPressed()
-{
-	SendLocalInputToASC(true, EPrototypeAbilityInputID::Fire);
 }
 
 void APrototypeBaseCharacter::Input_Move(const FInputActionValue& InputActionValue)
@@ -299,7 +231,7 @@ void APrototypeBaseCharacter::Input_Look(const FInputActionValue& InputActionVal
 	}
 }
 
-void APrototypeBaseCharacter::Input_Fire(const FInputActionValue& InputActionValue)
+void APrototypeBaseCharacter::Input_Fire(const EAbilityInputID AbilityInputTag)
 {
 	OnPrimaryAction();
 }
@@ -314,4 +246,14 @@ void APrototypeBaseCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+}
+
+void APrototypeBaseCharacter::AbilityInputPressed(const EAbilityInputID AbilityInputID)
+{
+	AbilitySystemComponent->AbilityLocalInputPressed(static_cast<int32>(AbilityInputID));
+}
+
+void APrototypeBaseCharacter::AbilityInputReleased(const EAbilityInputID AbilityInputID)
+{
+	AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
 }

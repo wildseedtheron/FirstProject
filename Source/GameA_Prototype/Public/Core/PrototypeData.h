@@ -3,7 +3,7 @@
 #include "PrototypeData.generated.h"
 
 UENUM(BlueprintType)
-enum class EPrototypeAbilityInputID : uint8
+enum class EAbilityInputID : uint8
 {
 	None,
 	Confirm,

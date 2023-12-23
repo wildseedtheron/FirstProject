@@ -48,8 +48,6 @@ protected:
 
 	void AddStartupGameplayAbilities();
 
-	void SendLocalInputToASC(bool bIsPressed, const EPrototypeAbilityInputID AbilityInputID);
-
 	UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
 
 	/// <summary>
@@ -90,7 +88,7 @@ protected:
 
 	virtual void HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
-	virtual void HandleFireWeaponPressed();
+	//virtual void HandleFireWeaponPressed();
 
 	friend UPrototypeAttributeSet;
 #pragma endregion
@@ -133,13 +131,10 @@ protected:
 	void LookUpAtRate(float Rate);
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
-	UInputAction* Fire;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
-	UInputAction* Jumps;
 
-	UPROPERTY(EditDefaultsOnly, Category="Input")
-	UGPInputConfig* InputConfig;
+	void AbilityInputPressed(const EAbilityInputID AbilityInputID);
+
+	void AbilityInputReleased(const EAbilityInputID AbilityInputID);
 
 	/** Handles moving forward/backward */
 	void Input_Move(const FInputActionValue& InputActionValue);
@@ -147,26 +142,16 @@ public:
 	/** Handles mouse and stick look */
 	void Input_Look(const FInputActionValue& InputActionValue);
 
-	/** Handles Jumping */
-	void Start_Jump(const FInputActionValue& InputActionValue);
-
-	/** Handles Jumping */
-	void Stop_Jump(const FInputActionValue& InputActionValue);
-
-	/** Handles Punch */
-	void Start_Punch(const FInputActionValue& InputActionValue);
-
-	/** Handles Punch */
-	void Stop_Punch(const FInputActionValue& InputActionValue);
-
-	/** Handles Punch */
-	void Start_Kick(const FInputActionValue& InputActionValue);
-
-	/** Handles Punch */
-	void Stop_Kick(const FInputActionValue& InputActionValue);
-
 	/** Handles Pew Pew */
-	void Input_Fire(const FInputActionValue& InputActionValue);
+	void Input_Fire(const EAbilityInputID AbilityInputID);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
+	UInputAction* Fire;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
+	UInputAction* Jumps;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UGPInputConfig* InputConfig;
 #pragma endregion
 
 

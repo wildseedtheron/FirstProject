@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Core/PrototypeData.h"
 #include "Core/GPInputConfig.h"
+#include "Core/PrototypeData.h"
 #include "GPLogChannels.h"
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 

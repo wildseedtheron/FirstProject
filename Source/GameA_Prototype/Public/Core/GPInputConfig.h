@@ -27,7 +27,7 @@ public:
 	TObjectPtr<const UInputAction> InputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
-	EPrototypeAbilityInputID AbilityInputTag;
+	EAbilityInputID AbilityInputID;
 
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
