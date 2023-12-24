@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS(Abstract, HideCategories = Input)
+UCLASS()
 class GAMEA_PROTOTYPE_API UPrototypeGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
