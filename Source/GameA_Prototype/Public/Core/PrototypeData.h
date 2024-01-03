@@ -9,7 +9,11 @@ enum class EAbilityInputID : uint8
 	Confirm,
 	Cancel,
 	Punch,
-	Kick,
+	Kick_Knee,
+	Kick_Front,
 	Fire,
-	Jump
+	Jump,
+	Combo_P_P,
+	Combo_P_P_P,
+	Combo_P_P_K
 };

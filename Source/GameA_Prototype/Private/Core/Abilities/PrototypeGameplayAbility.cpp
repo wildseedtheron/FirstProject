@@ -4,3 +4,8 @@
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 
 UPrototypeGameplayAbility::UPrototypeGameplayAbility() {}
+
+FGameplayTag UPrototypeGameplayAbility::GetComboTag()
+{
+	return AbilityComboTag;
+}

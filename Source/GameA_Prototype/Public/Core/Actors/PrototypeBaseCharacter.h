@@ -132,7 +132,7 @@ protected:
 
 public:
 
-	void AbilityInputPressed(const EAbilityInputID AbilityInputID);
+	void AbilityInputPressed(const FGameplayTag InputTag, const EAbilityInputID AbilityInputID);
 
 	void AbilityInputReleased(const EAbilityInputID AbilityInputID);
 

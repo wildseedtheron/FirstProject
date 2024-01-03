@@ -148,10 +148,20 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 			//UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
 			UE_LOG(LogTemp, Warning, TEXT("Ability %s bound to InputAction %s"), *UEnum::GetValueAsString(Action.AbilityInputID), *Action.InputTag.ToString());
 
-			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.AbilityInputID);
+			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.InputTag, Action.AbilityInputID);
 			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.AbilityInputID);
 		}
 	}
+}
+
+void APrototypeBaseCharacter::AbilityInputPressed(const FGameplayTag InputTag, const EAbilityInputID AbilityInputID)
+{
+	AbilitySystemComponent->AbilityInputTagPressed(InputTag, static_cast<int32>(AbilityInputID));
+}
+
+void APrototypeBaseCharacter::AbilityInputReleased(const EAbilityInputID AbilityInputID)
+{
+	AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
 }
 
 void APrototypeBaseCharacter::OnPrimaryAction()
@@ -246,14 +256,4 @@ void APrototypeBaseCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
-}
-
-void APrototypeBaseCharacter::AbilityInputPressed(const EAbilityInputID AbilityInputID)
-{
-	AbilitySystemComponent->AbilityLocalInputPressed(static_cast<int32>(AbilityInputID));
-}
-
-void APrototypeBaseCharacter::AbilityInputReleased(const EAbilityInputID AbilityInputID)
-{
-	AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
 }
