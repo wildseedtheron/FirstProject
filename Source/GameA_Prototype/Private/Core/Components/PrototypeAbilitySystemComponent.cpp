@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Core/Abilities/PrototypeGameplayAbility.h"
 #include "Core/Components/PrototypeAbilitySystemComponent.h"
+#include "Core/Abilities/PrototypeGameplayAbility.h"
+
 
 
 UPrototypeAbilitySystemComponent::UPrototypeAbilitySystemComponent() {}
