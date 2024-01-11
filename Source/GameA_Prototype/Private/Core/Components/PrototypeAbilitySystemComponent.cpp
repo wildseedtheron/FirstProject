@@ -3,11 +3,11 @@
 #include "Core/Components/PrototypeAbilitySystemComponent.h"
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 
-
+#include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeGameplayAbility)
 
 UPrototypeAbilitySystemComponent::UPrototypeAbilitySystemComponent() {}
 
-void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag, int32 InputID)
+void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(int32 InputID)
 {
 	// Consume the input if this InputID is overloaded with GenericConfirm/Cancel and the GenericConfim/Cancel callback is bound
 	if (IsGenericConfirmInputBound(InputID))
@@ -40,8 +40,6 @@ void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag
 					}
 
 					AbilitySpecInputPressed(Spec);
-
-					Cast<UPrototypeGameplayAbility>(Spec.Ability)->AbilityComboTag = InputTag;
 
 					// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
 					InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());

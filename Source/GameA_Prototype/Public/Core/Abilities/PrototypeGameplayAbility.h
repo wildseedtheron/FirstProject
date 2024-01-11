@@ -20,12 +20,5 @@ public:
 
 	// Abilities will activate when input is pressed
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	EAbilityInputID AbilityInputID{ EAbilityInputID::None };
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	FGameplayTag AbilityComboTag;
-
-protected:
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Abilities")
-	FGameplayTag GetComboTag();
+	FGameplayTag AbilityInputID;
 };

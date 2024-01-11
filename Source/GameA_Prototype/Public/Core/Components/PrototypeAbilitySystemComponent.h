@@ -18,7 +18,7 @@ class GAMEA_PROTOTYPE_API UPrototypeAbilitySystemComponent : public UAbilitySyst
 public:
 	UPrototypeAbilitySystemComponent();
 
-	void AbilityInputTagPressed(const FGameplayTag& InputTag, int32 InputID);
+	void AbilityInputTagPressed(int32 InputID);
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 

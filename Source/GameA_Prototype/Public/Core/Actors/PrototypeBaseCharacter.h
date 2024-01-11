@@ -132,9 +132,9 @@ protected:
 
 public:
 
-	void AbilityInputPressed(const FGameplayTag InputTag, const EAbilityInputID AbilityInputID);
+	void AbilityInputPressed(const FGameplayTag InputTag);
 
-	void AbilityInputReleased(const EAbilityInputID AbilityInputID);
+	void AbilityInputReleased(const FGameplayTag InputTag);
 
 	/** Handles moving forward/backward */
 	void Input_Move(const FInputActionValue& InputActionValue);

@@ -64,9 +64,9 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 	{
 		AbilitySystemComponent->GiveAbility(
 			FGameplayAbilitySpec(
-				StartupAbility, 
+				StartupAbility,
 				StartupAbility.GetDefaultObject()->GetAbilityLevel(),
-				static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID),
+				GetTypeHash(StartupAbility.GetDefaultObject()->AbilityInputID),
 				this
 			));
 		UE_LOG(LogTemp, Warning, TEXT("Ability Name : %s"), *StartupAbility.GetDefaultObject()->GetName());
@@ -145,24 +145,24 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("InputAction Name : %s"), *Action.InputTag.ToString());
-			UE_LOG(LogTemp, Warning, TEXT("Ability %s bound to InputAction %s"), *UEnum::GetValueAsString(Action.AbilityInputID), *Action.InputTag.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("InputAction bound to InputAction %s"), *Action.InputTag.ToString());
 
-			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.InputTag, Action.AbilityInputID);
-			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.AbilityInputID);
+			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.InputTag);
+			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.InputTag);
 		}
 	}
 }
 
-void APrototypeBaseCharacter::AbilityInputPressed(const FGameplayTag InputTag, const EAbilityInputID AbilityInputID)
+void APrototypeBaseCharacter::AbilityInputPressed(const FGameplayTag InputTag)
 {
-	//AbilitySystemComponent->AbilityInputTagPressed(InputTag, static_cast<int32>(AbilityInputID));
-	AbilitySystemComponent->AbilityInputTagPressed(InputTag);
+	AbilitySystemComponent->AbilityInputTagPressed(GetTypeHash(InputTag));
+	//AbilitySystemComponent->AbilityInputTagPressed(InputTag);
 }
 
-void APrototypeBaseCharacter::AbilityInputReleased(const EAbilityInputID AbilityInputID)
+void APrototypeBaseCharacter::AbilityInputReleased(const FGameplayTag InputTag)
 {
-	AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
+	AbilitySystemComponent->AbilityLocalInputReleased(GetTypeHash(InputTag));
+	//AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
 }
 
 void APrototypeBaseCharacter::OnPrimaryAction()
