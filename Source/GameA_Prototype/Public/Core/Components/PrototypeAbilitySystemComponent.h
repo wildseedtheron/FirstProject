@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayTagContainer.h"
 #include "PrototypeAbilitySystemComponent.generated.h"
 
 /**
@@ -18,6 +19,7 @@ public:
 	UPrototypeAbilitySystemComponent();
 
 	void AbilityInputTagPressed(const FGameplayTag& InputTag, int32 InputID);
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 
 protected:

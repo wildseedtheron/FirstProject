@@ -55,3 +55,10 @@ void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag
 		}
 	}
 }
+
+void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag) {
+	FGameplayTagContainer tagContainer;
+	tagContainer.AddTag(InputTag);
+	bool result = TryActivateAbilitiesByTag(tagContainer);
+	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilitiesByTag: %s"), (result ? TEXT("true") : TEXT("false")));
+}

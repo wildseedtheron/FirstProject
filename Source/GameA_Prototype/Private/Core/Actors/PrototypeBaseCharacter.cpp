@@ -156,7 +156,8 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 void APrototypeBaseCharacter::AbilityInputPressed(const FGameplayTag InputTag, const EAbilityInputID AbilityInputID)
 {
-	AbilitySystemComponent->AbilityInputTagPressed(InputTag, static_cast<int32>(AbilityInputID));
+	//AbilitySystemComponent->AbilityInputTagPressed(InputTag, static_cast<int32>(AbilityInputID));
+	AbilitySystemComponent->AbilityInputTagPressed(InputTag);
 }
 
 void APrototypeBaseCharacter::AbilityInputReleased(const EAbilityInputID AbilityInputID)
