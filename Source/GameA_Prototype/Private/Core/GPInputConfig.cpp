@@ -24,3 +24,23 @@ const UInputAction* UGPInputConfig::FindInputActionForTag(const FGameplayTag& In
 
 	return nullptr;
 }
+
+const FGameplayTag* UGPInputConfig::FindGameplayTagForAbility(TSubclassOf<UPrototypeGameplayAbility>& Ability, bool bLogNotFound) const
+{
+	for (const FTaggedInputAction& TaggedInputAction : TaggedInputActions)
+	{
+		if (TaggedInputAction.GameplayAbility && TaggedInputAction.GameplayAbility.GetDefaultObject()->GetFName() == Ability.GetDefaultObject()->GetFName())
+		{
+			UE_LOG(LogLyra, Warning, TEXT("Comparing Tagged Ability [%s] to Ability [%s]."), *TaggedInputAction.GameplayAbility.GetDefaultObject()->GetFName().ToString(), *Ability.GetDefaultObject()->GetFName().ToString());
+			UE_LOG(LogLyra, Warning, TEXT("Returning Tag [%s]"), *TaggedInputAction.InputTag.ToString());
+			return &TaggedInputAction.InputTag;
+		}
+	}
+
+	if (bLogNotFound)
+	{
+		UE_LOG(LogLyra, Error, TEXT("Can't find AbilityInputAction for Abilty [%s] on InputConfig [%s]."), *Ability.GetDefaultObject()->GetFName().ToString(), *GetNameSafe(this));
+	}
+
+	return nullptr;
+}

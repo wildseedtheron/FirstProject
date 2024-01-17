@@ -19,6 +19,6 @@ public:
 	UPrototypeGameplayAbility();
 
 	// Abilities will activate when input is pressed
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
 	FGameplayTag AbilityInputID;
 };

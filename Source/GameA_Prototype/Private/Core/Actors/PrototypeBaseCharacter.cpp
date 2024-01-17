@@ -66,10 +66,11 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 			FGameplayAbilitySpec(
 				StartupAbility,
 				StartupAbility.GetDefaultObject()->GetAbilityLevel(),
-				GetTypeHash(StartupAbility.GetDefaultObject()->AbilityInputID),
+				GetTypeHash(StartupAbility.GetDefaultObject()->AbilityInputID = *InputConfig->FindGameplayTagForAbility(StartupAbility, true)),
 				this
 			));
 		UE_LOG(LogTemp, Warning, TEXT("Ability Name : %s"), *StartupAbility.GetDefaultObject()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("InputAction bound to InputAction %s"), *InputConfig->FindGameplayTagForAbility(StartupAbility, true)->ToString());
 	}
 
 	// Now Apply Passives

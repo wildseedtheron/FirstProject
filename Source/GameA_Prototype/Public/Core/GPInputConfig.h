@@ -27,7 +27,7 @@ public:
 	TObjectPtr<const UInputAction> InputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
-	EAbilityInputID AbilityInputID;
+	TSubclassOf<UPrototypeGameplayAbility> GameplayAbility;
 
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
@@ -44,6 +44,9 @@ class GAMEA_PROTOTYPE_API UGPInputConfig : public UDataAsset
 public:
 	// Returns the first Input Action associated with a given tag.
 	const UInputAction* FindInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound) const;
+
+	// Returns the first Input Action associated with a given ability.
+	const FGameplayTag* FindGameplayTagForAbility(TSubclassOf<UPrototypeGameplayAbility>& Ability, bool bLogNotFound) const;
 
 	// List of input actions used by the owner. These input actions are mapped to a gameplay tag and must be manually bound.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))
