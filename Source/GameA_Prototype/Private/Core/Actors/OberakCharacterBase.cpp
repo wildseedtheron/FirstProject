@@ -1,34 +1,19 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Core/Actors/OberakCharacterBase.h"
+#include "AbilitySystemComponent.h"
 
-// Sets default values
-AOberakCharacterBase::AOberakCharacterBase()
-{
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+AOberakCharacterBase::AOberakCharacterBase() {
 	PrimaryActorTick.bCanEverTick = true;
-
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
 }
 
-// Called when the game starts or when spawned
-void AOberakCharacterBase::BeginPlay()
-{
+void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void AOberakCharacterBase::Tick(float DeltaTime)
-{
+void AOberakCharacterBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
 }
 
-// Called to bind functionality to input
-void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
-
