@@ -18,6 +18,12 @@ void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void AOberakCharacterBase::CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags) {
+	//The Ability System Component has multiple ways of cancelling and activating abilities.
+	//Using tags provides a generic means of categorizing different types of abilities without
+	//knowing what specific ability is active.
+	AbilitySystemComponent->CancelAbilities(&CancelWithTags);
+}
 
 //Hit boxes related---------------------------------------------------------------------------------------------------
 

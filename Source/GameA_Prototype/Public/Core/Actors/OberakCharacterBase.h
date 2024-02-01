@@ -22,6 +22,9 @@ public:
 	class UAbilitySystemComponent* AbilitySystemComponent;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
 };
 
 
