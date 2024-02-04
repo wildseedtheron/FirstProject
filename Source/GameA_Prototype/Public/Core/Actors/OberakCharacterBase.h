@@ -50,14 +50,3 @@ public:
 	TArray <FPoCharacterHitBox> HitBoxArray;
 };
 
-UCLASS(BlueprintType)
-class GAMEA_PROTOTYPE_API UPoCharacterHitBoxes : public UDataAsset {
-	GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TMap<FGameplayTag, FPoCharacterHitBox> HitBoxes;
-	UFUNCTION(BlueprintPure)
-	TArray<FPoCharacterHitBox> GetMatchingHitBoxes(TArray<FGameplayTag> Tags);
-	UFUNCTION(BlueprintPure)
-	bool GetHitBox(FGameplayTag Tag, FPoCharacterHitBox& Out_HitBox);
-};
