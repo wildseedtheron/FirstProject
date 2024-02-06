@@ -10,7 +10,9 @@ void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(AbilitySystemComponent)) {
 		AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
+		FGameplayAttribute attribute = AttributeSet->GetHealthAttribute();
+		FOnGameplayAttributeValueChange delegate = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(attribute);
+		delegate.AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
 	}
 }
 

@@ -11,3 +11,13 @@ void UObkCombatAttributeSet::PostGameplayEffectExecute(const struct FGameplayEff
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 }
+
+float UObkCombatAttributeSet::GetHealth() const {
+	return FMath::Max(Health.GetCurrentValue(), 0.0f);
+}
+
+void UObkCombatAttributeSet::SetHealth(float NewVal) {
+    NewVal = FMath::Max(NewVal, 0.0f);
+    UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
+    if (ensure(ASC)) { ASC->SetNumericAttributeBase(GetHealthAttribute(), NewVal); }
+}
