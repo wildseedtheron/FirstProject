@@ -8,6 +8,10 @@ AOberakCharacterBase::AOberakCharacterBase() {
 
 void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
+	if (IsValid(AbilitySystemComponent)) {
+		AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
+	}
 }
 
 void AOberakCharacterBase::Tick(float DeltaTime) {
@@ -19,9 +23,20 @@ void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 }
 
 void AOberakCharacterBase::CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags) {
-	//The Ability System Component has multiple ways of cancelling and activating abilities.
-	//Using tags provides a generic means of categorizing different types of abilities without
-	//knowing what specific ability is active.
 	AbilitySystemComponent->CancelAbilities(&CancelWithTags);
 }
 
+
+
+//Health
+void AOberakCharacterBase::OnHealthChangedInternal(const FOnAttributeChangeData& Data) {
+	OnHealthChanged(Data.OldValue, Data.NewValue);
+}
+float AOberakCharacterBase::GetHealth() const {
+	if (IsValid(AttributeSet)) { return AttributeSet->GetHealth(); }
+	return -1.0f;
+}
+float AOberakCharacterBase::GetMaxHealth() const {
+	if (IsValid(AttributeSet)) { return AttributeSet->GetMaxHealth(); }
+	return 0.0f;
+}

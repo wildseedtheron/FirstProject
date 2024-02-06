@@ -4,6 +4,7 @@
 #include "AbilitySystemInterface.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "Core/Abilities/ObkCombatAttributeSet.h"
 #include "OberakCharacterBase.generated.h"
 
 UCLASS()
@@ -17,14 +18,24 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	//Ability
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	class UAbilitySystemComponent* AbilitySystemComponent;
-
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
-
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
+	UPROPERTY()
+	const class UObkCombatAttributeSet* AttributeSet;
+
+	//Health
+	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities|Attributes")
+	void OnHealthChanged(float oldValue, float newValue);
+	UFUNCTION(BlueprintPure, Category = "Abilities|Attributes")
+	float GetHealth() const;
+	UFUNCTION(BlueprintPure, Category = "Abilities|Attributes")
+	float GetMaxHealth() const;
 };
 
 
