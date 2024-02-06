@@ -120,6 +120,8 @@ void APrototypeBaseCharacter::PossessedBy(AController* NewController)
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 		AddStartupGameplayAbilities();
 	}
+
+	SetOwner(NewController);
 }
 
 // Called every frame
