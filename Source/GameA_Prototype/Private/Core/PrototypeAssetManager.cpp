@@ -34,8 +34,8 @@ UPrototypeAssetManager& UPrototypeAssetManager::Get()
 	//	return *Singleton;
 	//}
 
-	//UE_LOG(LogTemp, Fatal, TEXT("Invalid AssetManagerClassName in DefaultEngine.ini.  It must be set to LyraAssetManager!"));
+	//UE_LOG(LogTemp, Fatal, TEXT("Invalid AssetManagerClassName in DefaultEngine.ini.  It must be set to GPAssetManager!"));
 
 	//// Fatal error above prevents this from being called.
-	//return *NewObject<ULyraAssetManager>();
+	//return *NewObject<UGPAssetManager>();
 }
