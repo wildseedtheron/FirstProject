@@ -3,10 +3,10 @@
 #include "GPLogChannels.h"
 #include "GameFramework/Actor.h"
 
-DEFINE_LOG_CATEGORY(LogLyra);
-DEFINE_LOG_CATEGORY(LogLyraExperience);
-DEFINE_LOG_CATEGORY(LogLyraAbilitySystem);
-DEFINE_LOG_CATEGORY(LogLyraTeams);
+DEFINE_LOG_CATEGORY(LogGP);
+DEFINE_LOG_CATEGORY(LogGPExperience);
+DEFINE_LOG_CATEGORY(LogGPAbilitySystem);
+DEFINE_LOG_CATEGORY(LogGPTeams);
 
 FString GetClientServerContextString(UObject* ContextObject)
 {

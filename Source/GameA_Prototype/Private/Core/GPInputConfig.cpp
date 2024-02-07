@@ -19,7 +19,7 @@ const UInputAction* UGPInputConfig::FindInputActionForTag(const FGameplayTag& In
 
 	if (bLogNotFound)
 	{
-		UE_LOG(LogLyra, Error, TEXT("Can't find AbilityInputAction for InputTag [%s] on InputConfig [%s]."), *InputTag.ToString(), *GetNameSafe(this));
+		UE_LOG(LogGP, Error, TEXT("Can't find AbilityInputAction for InputTag [%s] on InputConfig [%s]."), *InputTag.ToString(), *GetNameSafe(this));
 	}
 
 	return nullptr;
@@ -31,15 +31,15 @@ const FGameplayTag* UGPInputConfig::FindGameplayTagForAbility(TSubclassOf<UProto
 	{
 		if (TaggedInputAction.GameplayAbility && TaggedInputAction.GameplayAbility.GetDefaultObject()->GetFName() == Ability.GetDefaultObject()->GetFName())
 		{
-			UE_LOG(LogLyra, Warning, TEXT("Comparing Tagged Ability [%s] to Ability [%s]."), *TaggedInputAction.GameplayAbility.GetDefaultObject()->GetFName().ToString(), *Ability.GetDefaultObject()->GetFName().ToString());
-			UE_LOG(LogLyra, Warning, TEXT("Returning Tag [%s]"), *TaggedInputAction.InputTag.ToString());
+			UE_LOG(LogGP, Warning, TEXT("Comparing Tagged Ability [%s] to Ability [%s]."), *TaggedInputAction.GameplayAbility.GetDefaultObject()->GetFName().ToString(), *Ability.GetDefaultObject()->GetFName().ToString());
+			UE_LOG(LogGP, Warning, TEXT("Returning Tag [%s]"), *TaggedInputAction.InputTag.ToString());
 			return &TaggedInputAction.InputTag;
 		}
 	}
 
 	if (bLogNotFound)
 	{
-		UE_LOG(LogLyra, Error, TEXT("Can't find AbilityInputAction for Abilty [%s] on InputConfig [%s]."), *Ability.GetDefaultObject()->GetFName().ToString(), *GetNameSafe(this));
+		UE_LOG(LogGP, Error, TEXT("Can't find AbilityInputAction for Abilty [%s] on InputConfig [%s]."), *Ability.GetDefaultObject()->GetFName().ToString(), *GetNameSafe(this));
 	}
 
 	return nullptr;
