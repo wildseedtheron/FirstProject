@@ -21,14 +21,14 @@ public:
 
 	//Ability
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
-	//TObjectPtr<class UOberakAbilitySystemComponent> AbilitySystemComponent;
-	class UAbilitySystemComponent* AbilitySystemComponent;
+	TObjectPtr<class UOberakAbilitySystemComponent> AbilitySystemComponent;
+	//class UAbilitySystemComponent* AbilitySystemComponent;
 	//virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
 	UPROPERTY()
-	const class UObkCombatAttributeSet* AttributeSet;
+	class UObkCombatAttributeSet* AttributeSet;
 
 	//Health
 	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);
@@ -36,6 +36,8 @@ public:
 	void OnHealthChanged(float oldValue, float newValue);
 	UFUNCTION(BlueprintPure, Category = "Abilities|Attributes")
 	float GetHealth() const;
+	UFUNCTION(BlueprintCallable, Category = "Abilities|Attributes")
+	void SetHealth(float NewVal);
 	UFUNCTION(BlueprintPure, Category = "Abilities|Attributes")
 	float GetMaxHealth() const;
 };

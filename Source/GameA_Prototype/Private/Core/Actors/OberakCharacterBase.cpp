@@ -5,13 +5,14 @@
 AOberakCharacterBase::AOberakCharacterBase() {
 	PrimaryActorTick.bCanEverTick = true;
 	AbilitySystemComponent = CreateDefaultSubobject<UOberakAbilitySystemComponent>(TEXT("Ability System Component"));
+	AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attribute Set"));
 }
 
 void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(AbilitySystemComponent)) {
 		//AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attributes"));
-		AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
+		//AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
 		FGameplayAttribute attribute = AttributeSet->GetHealthAttribute();
 		FOnGameplayAttributeValueChange delegate = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(attribute);
 		delegate.AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
@@ -43,6 +44,9 @@ void AOberakCharacterBase::OnHealthChangedInternal(const FOnAttributeChangeData&
 float AOberakCharacterBase::GetHealth() const {
 	if (IsValid(AttributeSet)) { return AttributeSet->GetHealth(); }
 	return -1.0f;
+}
+void AOberakCharacterBase::SetHealth(float NewVal) {
+	if (IsValid(AttributeSet)) { AttributeSet->SetHealth(NewVal); }
 }
 float AOberakCharacterBase::GetMaxHealth() const {
 	if (IsValid(AttributeSet)) { return AttributeSet->GetMaxHealth(); }

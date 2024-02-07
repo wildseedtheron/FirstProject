@@ -13,7 +13,8 @@ void UObkCombatAttributeSet::PostGameplayEffectExecute(const struct FGameplayEff
 }
 
 float UObkCombatAttributeSet::GetHealth() const {
-	return FMath::Max(Health.GetCurrentValue(), 0.0f);
+	float current = Health.GetCurrentValue();
+	return FMath::Max(current, 0.0f);
 }
 
 void UObkCombatAttributeSet::SetHealth(float NewVal) {
