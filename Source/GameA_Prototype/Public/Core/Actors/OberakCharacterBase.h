@@ -21,8 +21,10 @@ public:
 
 	//Ability
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	//TObjectPtr<class UOberakAbilitySystemComponent> AbilitySystemComponent;
 	class UAbilitySystemComponent* AbilitySystemComponent;
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+	//virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
 	UPROPERTY()

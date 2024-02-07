@@ -1,14 +1,16 @@
 #include "Core/Actors/OberakCharacterBase.h"
+#include "Core/Components/OberakAbilitySystemComponent.h"
 #include "AbilitySystemComponent.h"
 
 AOberakCharacterBase::AOberakCharacterBase() {
 	PrimaryActorTick.bCanEverTick = true;
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Ability System Component"));
+	AbilitySystemComponent = CreateDefaultSubobject<UOberakAbilitySystemComponent>(TEXT("Ability System Component"));
 }
 
 void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(AbilitySystemComponent)) {
+		//AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attributes"));
 		AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
 		FGameplayAttribute attribute = AttributeSet->GetHealthAttribute();
 		FOnGameplayAttributeValueChange delegate = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(attribute);
@@ -24,6 +26,10 @@ void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+
+UAbilitySystemComponent* AOberakCharacterBase::GetAbilitySystemComponent() const {
+	return AbilitySystemComponent;
+}
 void AOberakCharacterBase::CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags) {
 	AbilitySystemComponent->CancelAbilities(&CancelWithTags);
 }
