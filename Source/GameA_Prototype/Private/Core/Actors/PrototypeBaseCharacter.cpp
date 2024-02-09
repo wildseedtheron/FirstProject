@@ -2,6 +2,7 @@
 
 
 #include "Core/Actors/PrototypeBaseCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "InputAction.h"
 #include "Core/Components/GPEnhancedInputComponent.h"
 #include "Logging/LogMacros.h"
@@ -15,11 +16,13 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeBaseCharacter)
 
 // Sets default values
-APrototypeBaseCharacter::APrototypeBaseCharacter()
+APrototypeBaseCharacter::APrototypeBaseCharacter(const class FObjectInitializer& ObjectInitializer)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bAbilitiesInitialized = false;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UPrototypeAbilitySystemComponent>(TEXT("Ability System"));
 
@@ -48,7 +51,7 @@ void APrototypeBaseCharacter::NotifyJumpApex()
 
 UAbilitySystemComponent* APrototypeBaseCharacter::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	return AbilitySystemComponent.Get();
 }
 
 void APrototypeBaseCharacter::AddStartupGameplayAbilities()
@@ -80,19 +83,78 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
 
-		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(
-			GameplayEffect, 1, EffectContext);
+		FGameplayEffectSpecHandle NewHandle = 
+			AbilitySystemComponent->MakeOutgoingSpec(
+				GameplayEffect,
+				1,
+				EffectContext
+			);
 
 		if (NewHandle.IsValid())
 		{
 			FActiveGameplayEffectHandle ActiveGameplayEffectHandle =
 				AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(
-					*NewHandle.Data.Get(), AbilitySystemComponent);
+					*NewHandle.Data.Get(), 
+					AbilitySystemComponent
+				);
 		}
 	}
 
-	UKismetSystemLibrary::PrintString(this, "We Are Pressing Our Input");
 	bAbilitiesInitialized = true;
+}
+
+void APrototypeBaseCharacter::AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility>& Ability)
+{
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent) return;
+
+	AbilitySystemComponent->GiveAbility(
+		FGameplayAbilitySpec(
+			Ability,
+			Ability.GetDefaultObject()->GetAbilityLevel(),
+			GetTypeHash(Ability.GetDefaultObject()->AbilityInputID = *InputConfig->FindGameplayTagForAbility(Ability, true)),
+			this
+		));
+
+	UE_LOG(LogTemp, Warning, TEXT("Ability Name : %s"), *Ability.GetDefaultObject()->GetName());
+}
+
+void APrototypeBaseCharacter::RemoveCharacterGameplayAbilities()
+{
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent) return;
+
+	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
+	for (const FGameplayAbilitySpec& Spec : AbilitySystemComponent->GetActivatableAbilities())
+	{
+		if ((Spec.SourceObject == this) && GameplayAbilities.Contains(Spec.Ability->GetClass())) {
+			AbilitiesToRemove.Add(Spec.Handle);
+		}
+	}
+
+	for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
+	{
+		AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
+	}
+}
+
+void APrototypeBaseCharacter::RemoveCharacterGameplayAbility(const FGameplayAbilitySpecHandle& AbilitySpecHandle)
+{
+	AbilitySystemComponent->ClearAbility(AbilitySpecHandle);
+}
+
+void APrototypeBaseCharacter::InitializeAttributes()
+{
+}
+
+void APrototypeBaseCharacter::InitializeHealth(float health)
+{
+	if (Attributes)
+	{
+		Attributes->InitHealth(health);
+		Attributes->InitMaxHealth(health);
+		return;
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("Attribute Set Not Initialized!"));
 }
 
 UEnhancedInputLocalPlayerSubsystem* APrototypeBaseCharacter::GetInputSubsystem() const
@@ -108,6 +170,28 @@ UEnhancedInputLocalPlayerSubsystem* APrototypeBaseCharacter::GetInputSubsystem()
 	}
 
 	return Subsystem;
+}
+
+float APrototypeBaseCharacter::GetHealth() const
+{
+	if (Attributes)
+	{
+		return Attributes->GetHealth();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Attribute Set Not Initialized!"));
+	return 0.0f;
+}
+
+float APrototypeBaseCharacter::GetMaxHealth() const
+{
+	if (Attributes)
+	{
+		return Attributes->GetMaxHealth();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Attribute Set Not Initialized!"));
+	return 0.0f;
 }
 
 void APrototypeBaseCharacter::PossessedBy(AController* NewController)
@@ -158,14 +242,12 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 void APrototypeBaseCharacter::AbilityInputPressed(const FGameplayTag InputTag)
 {
-	AbilitySystemComponent->AbilityInputTagPressed(GetTypeHash(InputTag));
-	//AbilitySystemComponent->AbilityInputTagPressed(InputTag);
+	AbilitySystemComponent->AbilityLocalInputPressed(GetTypeHash(InputTag));
 }
 
 void APrototypeBaseCharacter::AbilityInputReleased(const FGameplayTag InputTag)
 {
 	AbilitySystemComponent->AbilityLocalInputReleased(GetTypeHash(InputTag));
-	//AbilitySystemComponent->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
 }
 
 void APrototypeBaseCharacter::OnPrimaryAction()

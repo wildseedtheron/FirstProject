@@ -7,6 +7,7 @@
 
 UPrototypeAbilitySystemComponent::UPrototypeAbilitySystemComponent() {}
 
+
 void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(int32 InputID)
 {
 	// Consume the input if this InputID is overloaded with GenericConfirm/Cancel and the GenericConfim/Cancel callback is bound
@@ -59,4 +60,9 @@ void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag
 	tagContainer.AddTag(InputTag);
 	bool result = TryActivateAbilitiesByTag(tagContainer);
 	UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilitiesByTag: %s"), (result ? TEXT("true") : TEXT("false")));
+}
+
+void UPrototypeAbilitySystemComponent::ReceiveDamage(UPrototypeAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage)
+{
+	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
 }

@@ -41,6 +41,11 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UPrototypeAttributeSet, MaxHealth);
 
+	// Meta Attribute is temporary, do not replicate.
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData Damage;
+	ATTRIBUTE_ACCESSORS(UPrototypeAttributeSet, Damage);
+
 	void AdjustAttributeForMaxChanged(
 		const FGameplayAttributeData& AffectedAttribute,
 		const FGameplayAttributeData& MaxAttribute,

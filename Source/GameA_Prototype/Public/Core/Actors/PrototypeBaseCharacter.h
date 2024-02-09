@@ -13,6 +13,7 @@
 class UPrototypeAbilitySystemComponent;
 class UPrototypeGameplayAbility;
 class UPrototypeAttributeSet;
+class UGameplayEffect;
 class UInputComponent;
 class UGPInputConfig;
 struct FInputActionValue;
@@ -21,14 +22,14 @@ struct FInputActionValue;
 // It is declared as dynamic so it can be accessed also in Blueprints
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUseItem);
 
-UCLASS(config = Game)
+UCLASS()
 class GAMEA_PROTOTYPE_API APrototypeBaseCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	APrototypeBaseCharacter();
+	APrototypeBaseCharacter(const class FObjectInitializer& ObjectInitializer);
 
 #pragma region Class Overrides
 protected:
@@ -47,8 +48,19 @@ protected:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void AddStartupGameplayAbilities();
+	virtual void AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility>& Ability);
+	void RemoveCharacterGameplayAbilities();
+	void RemoveCharacterGameplayAbility(const FGameplayAbilitySpecHandle& AbilitySpecHandle);
+	virtual void InitializeAttributes();
+	virtual void InitializeHealth(float health);
 
 	UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxHealth() const;
 
 	/// <summary>
 	/// Sets the default attribute values on init.
@@ -98,8 +110,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPrototypeAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
 	TObjectPtr<UPrototypeAttributeSet> Attributes;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
+	TSubclassOf<UGameplayEffect> DefaultAttributes;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
+	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)

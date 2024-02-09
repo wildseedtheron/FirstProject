@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "PrototypeAbilitySystemComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FReceiedDamageDelegate, UPrototypeAbilitySystemComponent*, SourceASC, float, UnmitigatedDamage, float, MitigatedDamage);
+
 /**
  * 
  */
@@ -21,6 +23,10 @@ public:
 	void AbilityInputTagPressed(int32 InputID);
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+
+	FReceiedDamageDelegate ReceivedDamage;
+
+	virtual void ReceiveDamage(UPrototypeAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
 
 protected:
 	// Handles to abilities that had their input pressed this frame.
