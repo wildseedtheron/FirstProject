@@ -9,9 +9,10 @@ class GAMEA_PROTOTYPE_API UObkCombatAttributeSet : public UAttributeSet {
 	GENERATED_BODY()
 
 public:
+	UObkCombatAttributeSet();
 	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	FGameplayAttributeData Health;
 	//GAMEPLAYATTRIBUTE_VALUE_GETTER(Health);
 	//GAMEPLAYATTRIBUTE_VALUE_SETTER(Health);
@@ -20,7 +21,7 @@ public:
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(Health);
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UObkCombatAttributeSet, Health);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	FGameplayAttributeData MaxHealth;
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(MaxHealth);
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(MaxHealth);

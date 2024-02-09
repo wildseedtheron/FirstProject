@@ -18,7 +18,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void PossessedBy(AController* NewController) override;
 	//Ability
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	TObjectPtr<class UOberakAbilitySystemComponent> AbilitySystemComponent;
@@ -27,8 +27,9 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
-	UPROPERTY()
-	class UObkCombatAttributeSet* AttributeSet;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
+	//class UObkCombatAttributeSet* AttributeSet;
+	TObjectPtr<UObkCombatAttributeSet> AttributeSet;
 
 	//Health
 	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);

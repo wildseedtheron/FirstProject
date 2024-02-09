@@ -19,6 +19,10 @@ void AOberakCharacterBase::BeginPlay() {
 	}
 }
 
+void AOberakCharacterBase::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+}
+
 void AOberakCharacterBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 }

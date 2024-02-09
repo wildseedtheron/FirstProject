@@ -2,7 +2,8 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 
-//The PostGameplayEffectExecute function handles any logic that should happen after a GameplayEffect is applied to the Ability System Component that owns this AttributeSet. In effect it "listens" for changes to happen.
+UObkCombatAttributeSet::UObkCombatAttributeSet() {};
+
 void UObkCombatAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) {
 	Super::PostGameplayEffectExecute(Data);
 
