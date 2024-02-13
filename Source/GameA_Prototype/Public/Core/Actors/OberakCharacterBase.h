@@ -15,9 +15,8 @@ public:
 	AOberakCharacterBase();
 protected:
 	virtual void BeginPlay() override;
+	void InitializeAttributes();
 public:	
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PossessedBy(AController* NewController) override;
 	//Ability
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
@@ -27,9 +26,13 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
-	//class UObkCombatAttributeSet* AttributeSet;
+	
+	UPROPERTY()
+	//UObkCombatAttributeSet* AttributeSet;
 	TObjectPtr<UObkCombatAttributeSet> AttributeSet;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities|Attributes")
+	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 	//Health
 	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);

@@ -7,7 +7,6 @@ AOberakCharacterBase::AOberakCharacterBase() {
 	AbilitySystemComponent = CreateDefaultSubobject<UOberakAbilitySystemComponent>(TEXT("Ability System Component"));
 	AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attribute Set"));
 }
-
 void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(AbilitySystemComponent)) {
@@ -18,20 +17,10 @@ void AOberakCharacterBase::BeginPlay() {
 		delegate.AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
 	}
 }
-
 void AOberakCharacterBase::PossessedBy(AController* NewController) {
 	Super::PossessedBy(NewController);
+	InitializeAttributes();
 }
-
-void AOberakCharacterBase::Tick(float DeltaTime) {
-	Super::Tick(DeltaTime);
-}
-
-void AOberakCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-
 UAbilitySystemComponent* AOberakCharacterBase::GetAbilitySystemComponent() const {
 	return AbilitySystemComponent;
 }
@@ -42,6 +31,14 @@ void AOberakCharacterBase::CancelAbilityWithTags(const FGameplayTagContainer Can
 
 
 //Health
+void AOberakCharacterBase::InitializeAttributes() {
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, 1.0f, EffectContext);
+	if (NewHandle.IsValid()) {
+		FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
+	}
+}
 void AOberakCharacterBase::OnHealthChangedInternal(const FOnAttributeChangeData& Data) {
 	OnHealthChanged(Data.OldValue, Data.NewValue);
 }
