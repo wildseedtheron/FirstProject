@@ -2,8 +2,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "Engine/DataAsset.h"
-#include "GameplayTagContainer.h"
 #include "Core/Abilities/ObkCombatAttributeSet.h"
 #include "OberakCharacterBase.generated.h"
 
@@ -12,7 +10,7 @@ class GAMEA_PROTOTYPE_API AOberakCharacterBase : public ACharacter, public IAbil
 	GENERATED_BODY()
 
 public:
-	AOberakCharacterBase();
+	AOberakCharacterBase(const class FObjectInitializer& ObjectInitializer);
 protected:
 	virtual void BeginPlay() override;
 	void InitializeAttributes();
@@ -29,7 +27,7 @@ public:
 	
 	UPROPERTY()
 	//UObkCombatAttributeSet* AttributeSet;
-	TObjectPtr<UObkCombatAttributeSet> AttributeSet;
+	TObjectPtr<class UObkCombatAttributeSet> AttributeSet;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities|Attributes")
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;

@@ -2,7 +2,7 @@
 #include "Core/Components/OberakAbilitySystemComponent.h"
 #include "AbilitySystemComponent.h"
 
-AOberakCharacterBase::AOberakCharacterBase() {
+AOberakCharacterBase::AOberakCharacterBase(const class FObjectInitializer& ObjectInitializer) {
 	PrimaryActorTick.bCanEverTick = true;
 	AbilitySystemComponent = CreateDefaultSubobject<UOberakAbilitySystemComponent>(TEXT("Ability System Component"));
 	AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attribute Set"));
