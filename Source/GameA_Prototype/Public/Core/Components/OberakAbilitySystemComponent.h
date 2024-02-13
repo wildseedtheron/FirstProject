@@ -9,9 +9,9 @@ UCLASS()
 class GAMEA_PROTOTYPE_API UOberakAbilitySystemComponent : public UAbilitySystemComponent {
 	GENERATED_BODY()
 public:
-	UOberakAbilitySystemComponent();
+	//UOberakAbilitySystemComponent();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	const UAttributeSet* AttributeSet;
+	//UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	//const UAttributeSet* AttributeSet;
 	//const class UObkCombatAttributeSet* AttributeSet;
 };

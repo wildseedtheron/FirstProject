@@ -5,16 +5,16 @@
 AOberakCharacterBase::AOberakCharacterBase(const class FObjectInitializer& ObjectInitializer) {
 	PrimaryActorTick.bCanEverTick = true;
 	AbilitySystemComponent = CreateDefaultSubobject<UOberakAbilitySystemComponent>(TEXT("Ability System Component"));
-	AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attribute Set"));
+	AttributeSetBase = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("AttributeSetBase"));
 }
 void AOberakCharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(AbilitySystemComponent)) {
-		//AttributeSet = CreateDefaultSubobject<UObkCombatAttributeSet>(TEXT("Attributes"));
-		//AttributeSet = AbilitySystemComponent->GetSet<UObkCombatAttributeSet>();
-		FGameplayAttribute attribute = AttributeSet->GetHealthAttribute();
-		FOnGameplayAttributeValueChange delegate = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(attribute);
-		delegate.AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
+		//FGameplayAttribute attribute = AttributeSetBase->GetHealthAttribute();
+		//FOnGameplayAttributeValueChange delegate = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(attribute);
+		//delegate.AddUObject(this, &AOberakCharacterBase::OnHealthChangedInternal);
+
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AOberakCharacterBase::HealthChanged);
 	}
 }
 void AOberakCharacterBase::PossessedBy(AController* NewController) {
@@ -43,13 +43,19 @@ void AOberakCharacterBase::OnHealthChangedInternal(const FOnAttributeChangeData&
 	OnHealthChanged(Data.OldValue, Data.NewValue);
 }
 float AOberakCharacterBase::GetHealth() const {
-	if (IsValid(AttributeSet)) { return AttributeSet->GetHealth(); }
+	//if (IsValid(AttributeSet)) { return AttributeSet->GetHealth(); }
+	if (AttributeSetBase) { return AttributeSetBase->GetHealth(); }
 	return -1.0f;
 }
 void AOberakCharacterBase::SetHealth(float NewVal) {
-	if (IsValid(AttributeSet)) { AttributeSet->SetHealth(NewVal); }
+	//if (IsValid(AttributeSet)) { AttributeSet->SetHealth(NewVal); }
+	if (AttributeSetBase) { AttributeSetBase->SetHealth(NewVal); }
 }
 float AOberakCharacterBase::GetMaxHealth() const {
-	if (IsValid(AttributeSet)) { return AttributeSet->GetMaxHealth(); }
-	return 0.0f;
+	//if (IsValid(AttributeSet)) { return AttributeSet->GetMaxHealth(); }
+	if (AttributeSetBase) { return AttributeSetBase->GetMaxHealth(); }
+	return -1.0f;
+}
+void AOberakCharacterBase::HealthChanged(const FOnAttributeChangeData& Data) {
+	OnHealthChangedInternal(Data);
 }

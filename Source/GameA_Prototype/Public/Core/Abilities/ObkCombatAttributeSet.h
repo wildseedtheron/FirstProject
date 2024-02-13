@@ -14,10 +14,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Abilities")
 	FGameplayAttributeData Health;
-	//GAMEPLAYATTRIBUTE_VALUE_GETTER(Health);
-	//GAMEPLAYATTRIBUTE_VALUE_SETTER(Health);
-	float GetHealth() const;
-	void SetHealth(float NewVal);
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(Health);
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(Health);
+	//float GetHealth() const;
+	//void SetHealth(float NewVal);
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(Health);
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(UObkCombatAttributeSet, Health);
 

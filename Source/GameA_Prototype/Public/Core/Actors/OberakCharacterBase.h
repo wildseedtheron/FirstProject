@@ -26,13 +26,15 @@ public:
 	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
 	
 	UPROPERTY()
-	//UObkCombatAttributeSet* AttributeSet;
-	TObjectPtr<class UObkCombatAttributeSet> AttributeSet;
+	UObkCombatAttributeSet* AttributeSetBase;
+	//TObjectPtr<class UObkCombatAttributeSet> AttributeSetBase;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities|Attributes")
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 	//Health
+	FDelegateHandle HealthChangedDelegateHandle;
+	virtual void HealthChanged(const FOnAttributeChangeData& Data);
 	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);
 	UFUNCTION(BlueprintImplementableEvent, Category = "Abilities|Attributes")
 	void OnHealthChanged(float oldValue, float newValue);
