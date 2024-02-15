@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	static UGPCameraComponent* FindCameraComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UGPCameraComponent>() : nullptr); }
 
+	UFUNCTION(BlueprintCallable)
+	void SetCameraMode(TSubclassOf<UGPCameraMode> CameraMode);
+
 	// Returns the target actor that the camera is looking at.
 	virtual AActor* GetTargetActor() const { return GetOwner(); }
 
@@ -55,9 +58,14 @@ protected:
 
 	virtual void UpdateCameraModes();
 
+public:
+	// Stack used to blend the camera modes.
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Camera")
+	TSubclassOf<UGPCameraMode> DefaultCameraMode;
+
 protected:
 
-	// Stack used to blend the camera modes.
+
 	UPROPERTY()
 	TObjectPtr<UGPCameraModeStack> CameraModeStack;
 

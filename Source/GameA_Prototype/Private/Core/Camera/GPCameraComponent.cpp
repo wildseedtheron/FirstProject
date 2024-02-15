@@ -41,6 +41,11 @@ void UGPCameraComponent::GetBlendInfo(float& OutWeightOfTopLayer, FGameplayTag& 
 	CameraModeStack->GetBlendInfo(/*out*/ OutWeightOfTopLayer, /*out*/ OutTagOfTopLayer);
 }
 
+void UGPCameraComponent::SetCameraMode(TSubclassOf<UGPCameraMode> CameraMode)
+{
+	if (CameraMode) CameraModeStack->PushCameraMode(CameraMode);
+}
+
 void UGPCameraComponent::OnRegister()
 {
 	Super::OnRegister();
@@ -50,6 +55,8 @@ void UGPCameraComponent::OnRegister()
 		CameraModeStack = NewObject<UGPCameraModeStack>(this);
 		check(CameraModeStack);
 	}
+
+	CameraModeStack->PushCameraMode(DefaultCameraMode);
 }
 
 void UGPCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView)
