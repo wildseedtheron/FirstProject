@@ -2,5 +2,51 @@
 
 
 #include "Core/Abilities/PrototypeGameplayAbility.h"
+#include "AbilitySystemLog.h"
+#include "Core/Actors/PrototypeBaseCharacter.h"
 
-UPrototypeGameplayAbility::UPrototypeGameplayAbility() {}
+#include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeGameplayAbility)
+
+#define ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(FunctionName, ReturnValue)																				\
+{																																						\
+	if (!ensure(IsInstantiated()))																														\
+	{																																					\
+		ABILITY_LOG(Error, TEXT("%s: " #FunctionName " cannot be called on a non-instanced ability. Check the instancing policy."), *GetPathName());	\
+		return ReturnValue;																																\
+	}																																					\
+}
+
+UPrototypeGameplayAbility::UPrototypeGameplayAbility(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ActiveCameraMode = nullptr;
+}
+
+void UPrototypeGameplayAbility::SetCameraMode(TSubclassOf<UGPCameraMode> CameraMode)
+{
+	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(SetCameraMode, );
+	if (APrototypeBaseCharacter* OwnerActor = Cast<APrototypeBaseCharacter>(GetActorInfo().AvatarActor))
+	{
+		OwnerActor->SetAbilityCameraMode(CameraMode, CurrentSpecHandle);
+		ActiveCameraMode = CameraMode;
+	}
+}
+
+void UPrototypeGameplayAbility::ClearCameraMode()
+{
+
+	if (ActiveCameraMode)
+	{
+		if (APrototypeBaseCharacter* OwnerActor = Cast<APrototypeBaseCharacter>(GetActorInfo().AvatarActor))
+		{
+			OwnerActor->ClearAbilityCameraMode(CurrentSpecHandle);
+		}
+
+		ActiveCameraMode = nullptr;
+	}
+}
+
+FGameplayAbilitySpecHandle UPrototypeGameplayAbility::GetSpecHandle()
+{
+	return GetCurrentAbilitySpecHandle();
+}

@@ -11,6 +11,8 @@
 #include "PrototypeBaseCharacter.generated.h"
 
 class UPrototypeAbilitySystemComponent;
+class UGPCameraComponent;
+class UGPCameraMode;
 class UPrototypeGameplayAbility;
 class UPrototypeAttributeSet;
 class UGameplayEffect;
@@ -45,6 +47,8 @@ public:
 
 #pragma region Ability System
 protected:
+
+	TSubclassOf<UGPCameraMode> DetermineCameraMode() const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void AddStartupGameplayAbilities();
@@ -108,6 +112,9 @@ protected:
 #pragma region Ability Component Property
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UGPCameraComponent> CameraComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPrototypeAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
@@ -120,7 +127,7 @@ public:
 	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	float TurnRateGamepad;
 
 	///** Delegate to whom anyone can subscribe to receive this event */
@@ -150,6 +157,13 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	/** Overrides the camera from an active gameplay ability */
+	void SetAbilityCameraMode(TSubclassOf<UGPCameraMode> CameraMode, const FGameplayAbilitySpecHandle& OwningSpecHandle);
+
+	/** Clears the camera override if it is set */
+	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
+
 	void AbilityInputPressed(const FGameplayTag InputTag);
 
 	void AbilityInputReleased(const FGameplayTag InputTag);
@@ -162,6 +176,8 @@ public:
 
 	/** Handles Pew Pew */
 	void Input_Fire(const EAbilityInputID AbilityInputID);
+
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
 	UInputAction* Fire;
@@ -176,4 +192,11 @@ public:
 protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnDeath();
+
+	/** Camera mode set by an ability. */
+	UPROPERTY()
+	TSubclassOf<UGPCameraMode> AbilityCameraMode;
+
+	/** Spec handle for the last ability to set a camera mode. */
+	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
 };

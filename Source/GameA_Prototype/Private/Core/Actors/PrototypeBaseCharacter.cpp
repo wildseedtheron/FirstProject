@@ -3,6 +3,7 @@
 
 #include "Core/Actors/PrototypeBaseCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Core/Camera/GPCameraComponent.h"
 #include "InputAction.h"
 #include "Core/Components/GPEnhancedInputComponent.h"
 #include "Logging/LogMacros.h"
@@ -18,11 +19,18 @@
 // Sets default values
 APrototypeBaseCharacter::APrototypeBaseCharacter(const class FObjectInitializer& ObjectInitializer)
 {
+	AbilityCameraMode = nullptr;
+
+
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bAbilitiesInitialized = false;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
+
+	CameraComponent = CreateDefaultSubobject<UGPCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetRelativeLocation(FVector(-300.0f, 0.0f, 75.0f));
+	CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &APrototypeBaseCharacter::DetermineCameraMode);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UPrototypeAbilitySystemComponent>(TEXT("Ability System"));
 
@@ -47,6 +55,21 @@ void APrototypeBaseCharacter::Landed(const FHitResult& Hit)
 
 void APrototypeBaseCharacter::NotifyJumpApex()
 {
+}
+
+TSubclassOf<UGPCameraMode> APrototypeBaseCharacter::DetermineCameraMode() const
+{
+	if (AbilityCameraMode)
+	{
+		return AbilityCameraMode;
+	}
+
+	if (CameraComponent)
+	{
+		return CameraComponent->DefaultCameraMode;
+	}
+
+	return nullptr;
 }
 
 UAbilitySystemComponent* APrototypeBaseCharacter::GetAbilitySystemComponent() const
@@ -237,6 +260,24 @@ void APrototypeBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &APrototypeBaseCharacter::AbilityInputPressed, Action.InputTag);
 			EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Completed, this, &APrototypeBaseCharacter::AbilityInputReleased, Action.InputTag);
 		}
+	}
+}
+
+void APrototypeBaseCharacter::SetAbilityCameraMode(TSubclassOf<UGPCameraMode> CameraMode, const FGameplayAbilitySpecHandle& OwningSpecHandle)
+{
+	if (CameraMode)
+	{
+		AbilityCameraMode = CameraMode;
+		AbilityCameraModeOwningSpecHandle = OwningSpecHandle;
+	}
+}
+
+void APrototypeBaseCharacter::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)
+{
+	if (AbilityCameraModeOwningSpecHandle == OwningSpecHandle)
+	{
+		AbilityCameraMode = nullptr;
+		AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
 	}
 }
 

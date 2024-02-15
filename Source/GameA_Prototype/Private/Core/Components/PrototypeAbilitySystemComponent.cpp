@@ -3,7 +3,7 @@
 #include "Core/Components/PrototypeAbilitySystemComponent.h"
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeGameplayAbility)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeAbilitySystemComponent)
 
 UPrototypeAbilitySystemComponent::UPrototypeAbilitySystemComponent() {}
 
