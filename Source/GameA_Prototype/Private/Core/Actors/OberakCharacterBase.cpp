@@ -44,7 +44,12 @@ void AOberakCharacterBase::OnHealthChangedInternal(const FOnAttributeChangeData&
 }
 float AOberakCharacterBase::GetHealth() const {
 	//if (IsValid(AttributeSet)) { return AttributeSet->GetHealth(); }
-	if (AttributeSetBase) { return AttributeSetBase->GetHealth(); }
+	//if (AttributeSetBase) { return AttributeSetBase->GetHealth(); }
+	if (AttributeSetBase) {
+		const UAttributeSet* baseSet = GetAbilitySystemComponent()->GetAttributeSet(UObkCombatAttributeSet::StaticClass());
+		const UObkCombatAttributeSet* attributeSet = Cast<UObkCombatAttributeSet>(baseSet);
+		return attributeSet->GetHealth();
+	}
 	return -1.0f;
 }
 void AOberakCharacterBase::SetHealth(float NewVal) {
