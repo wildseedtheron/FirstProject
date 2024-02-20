@@ -60,9 +60,6 @@ protected:
 
 	UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	void CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags);
-
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetHealth() const;
 
