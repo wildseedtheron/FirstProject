@@ -195,6 +195,10 @@ UEnhancedInputLocalPlayerSubsystem* APrototypeBaseCharacter::GetInputSubsystem()
 	return Subsystem;
 }
 
+void APrototypeBaseCharacter::CancelAbilityWithTags(const FGameplayTagContainer CancelWithTags) {
+	AbilitySystemComponent->CancelAbilities(&CancelWithTags);
+}
+
 float APrototypeBaseCharacter::GetHealth() const
 {
 	if (Attributes)
