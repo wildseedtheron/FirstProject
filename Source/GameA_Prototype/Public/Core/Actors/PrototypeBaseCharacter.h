@@ -101,6 +101,10 @@ protected:
 	/// <param name="EventTags">The gameplay tags of the event that changed health.</param>
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHealthChanged1(float oldValue, float newValue);
+	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle HealthChangedDelegateHandle;
 
 	virtual void HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
 		APrototypeBaseCharacter* InstigatorCharacter, AActor* DamageOwner);

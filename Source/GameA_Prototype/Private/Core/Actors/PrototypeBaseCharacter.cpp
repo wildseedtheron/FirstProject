@@ -47,6 +47,9 @@ APrototypeBaseCharacter::APrototypeBaseCharacter(const class FObjectInitializer&
 void APrototypeBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (IsValid(AbilitySystemComponent)) {
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnHealthChangedInternal);
+	}
 }
 
 void APrototypeBaseCharacter::Landed(const FHitResult& Hit)
@@ -331,6 +334,10 @@ void APrototypeBaseCharacter::HandleHealthChanged(float DeltaValue, const FGamep
 	{
 		OnHealthChanged(DeltaValue, EventTags);
 	}
+}
+
+void APrototypeBaseCharacter::OnHealthChangedInternal(const FOnAttributeChangeData& Data) {
+	OnHealthChanged1(Data.OldValue, Data.NewValue);
 }
 
 void APrototypeBaseCharacter::Input_Move(const FInputActionValue& InputActionValue)
