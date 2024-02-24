@@ -64,5 +64,8 @@ void UPrototypeAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag
 
 void UPrototypeAbilitySystemComponent::ReceiveDamage(UPrototypeAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage)
 {
-	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
+	if (SourceASC)
+	{
+		ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
+	}
 }
