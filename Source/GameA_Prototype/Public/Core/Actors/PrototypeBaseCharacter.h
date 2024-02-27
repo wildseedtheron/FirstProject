@@ -19,10 +19,30 @@ class UGameplayEffect;
 class UInputComponent;
 class UGPInputConfig;
 struct FInputActionValue;
+class AActor;
 
 // Declaration of the delegate that will be called when the Primary Action is triggered
 // It is declared as dynamic so it can be accessed also in Blueprints
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUseItem);
+
+
+USTRUCT()
+struct FGPEquipmentActorToSpawn
+{
+	GENERATED_BODY()
+
+	FGPEquipmentActorToSpawn()
+	{}
+
+	UPROPERTY(EditAnywhere, Category = Equipment)
+	TSubclassOf<AActor> ActorToSpawn;
+
+	UPROPERTY(EditAnywhere, Category = Equipment)
+	FName AttachSocket;
+
+	UPROPERTY(EditAnywhere, Category = Equipment)
+	FTransform AttachTransform;
+};
 
 UCLASS()
 class GAMEA_PROTOTYPE_API APrototypeBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -184,6 +204,14 @@ public:
 	/** Handles Pew Pew */
 	void Input_Fire(const EAbilityInputID AbilityInputID);
 
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	void EquipWeapon();
+
+	UFUNCTION(BlueprintCallable, Category = "Equipment")
+	virtual void DestroyEquipmentActors();
+
+	UFUNCTION(BlueprintPure, Category = "Equipment")
+	APawn* GetPawn() const;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Controls|Input Actions")
@@ -193,6 +221,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UGPInputConfig* InputConfig;
+
+	// Actors to spawn on the pawn when this is equipped
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
+	TArray<FGPEquipmentActorToSpawn> EquipmentToSpawn;
+
+	TObjectPtr<AActor> SpawnedEquipment;
 #pragma endregion
 
 

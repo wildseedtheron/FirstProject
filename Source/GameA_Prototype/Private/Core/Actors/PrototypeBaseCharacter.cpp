@@ -384,6 +384,32 @@ void APrototypeBaseCharacter::Input_Fire(const EAbilityInputID AbilityInputTag)
 	OnPrimaryAction();
 }
 
+void APrototypeBaseCharacter::EquipWeapon()
+{
+	for (const FGPEquipmentActorToSpawn& SpawnInfo : EquipmentToSpawn)
+	{
+		AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnInfo.ActorToSpawn, FTransform::Identity, this);
+		NewActor->FinishSpawning(FTransform::Identity, /*bIsDefaultTransform=*/ true);
+		NewActor->SetActorRelativeTransform(SpawnInfo.AttachTransform);
+		NewActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SpawnInfo.AttachSocket); 
+		DestroyEquipmentActors();
+		SpawnedEquipment = NewActor;
+	}
+}
+
+void APrototypeBaseCharacter::DestroyEquipmentActors()
+{
+	if (SpawnedEquipment)
+	{
+		SpawnedEquipment->Destroy();
+	}
+}
+
+APawn* APrototypeBaseCharacter::GetPawn() const
+{
+	return Cast<APawn>(GetOuter());
+}
+
 void APrototypeBaseCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
