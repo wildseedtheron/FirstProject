@@ -55,17 +55,20 @@ USTRUCT(BlueprintType)
 struct FPoCharacterHitBox {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	FName SocketName = "R_wrist";
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FName SocketName = "hand_r";
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	float Radius = 25.0f;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, meta = (FullyExpand = true))
 struct FPoCharacterHitBoxContainer {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FGameplayTag GameplayTag;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(FullyExpand=true))
 	TArray <FPoCharacterHitBox> HitBoxArray;
 };
 
