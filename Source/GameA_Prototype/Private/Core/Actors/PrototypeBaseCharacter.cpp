@@ -129,7 +129,7 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 	bAbilitiesInitialized = true;
 }
 
-void APrototypeBaseCharacter::AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility>& Ability)
+void APrototypeBaseCharacter::AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility> Ability)
 {
 	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent) return;
 

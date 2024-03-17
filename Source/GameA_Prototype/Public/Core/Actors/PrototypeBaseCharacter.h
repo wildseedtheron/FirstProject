@@ -66,13 +66,16 @@ public:
 #pragma endregion
 
 #pragma region Ability System
+public:
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	virtual void AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility> Ability);
+
 protected:
 
 	TSubclassOf<UGPCameraMode> DetermineCameraMode() const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void AddStartupGameplayAbilities();
-	virtual void AddCharacterAbilityWithInput(TSubclassOf<UPrototypeGameplayAbility>& Ability);
 	void RemoveCharacterGameplayAbilities();
 	void RemoveCharacterGameplayAbility(const FGameplayAbilitySpecHandle& AbilitySpecHandle);
 	virtual void InitializeAttributes();
