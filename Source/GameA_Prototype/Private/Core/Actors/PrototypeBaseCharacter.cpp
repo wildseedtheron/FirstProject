@@ -133,13 +133,16 @@ void APrototypeBaseCharacter::AddCharacterAbilityWithInput(TSubclassOf<UPrototyp
 {
 	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent) return;
 
-	AbilitySystemComponent->GiveAbility(
-		FGameplayAbilitySpec(
-			Ability,
-			Ability.GetDefaultObject()->GetAbilityLevel(),
-			GetTypeHash(Ability.GetDefaultObject()->AbilityInputID = *InputConfig->FindGameplayTagForAbility(Ability, true)),
-			this
-		));
+	if (Ability)
+	{
+		AbilitySystemComponent->GiveAbility(
+			FGameplayAbilitySpec(
+				Ability,
+				Ability.GetDefaultObject()->GetAbilityLevel(),
+				GetTypeHash(Ability.GetDefaultObject()->AbilityInputID = *InputConfig->FindGameplayTagForAbility(Ability, true)),
+				this
+			));
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Ability Name : %s"), *Ability.GetDefaultObject()->GetName());
 }
