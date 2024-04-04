@@ -33,6 +33,10 @@ public:
 	// Called every time a gameplay effect is applied to the ability system that controls this attribute set.
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_AttackWeight, Category = "Attributes")
+	FGameplayAttributeData AttackWeight;
+	ATTRIBUTE_ACCESSORS(UPrototypeAttributeSet, AttackWeight);
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UPrototypeAttributeSet, Health);
@@ -51,6 +55,9 @@ public:
 		const FGameplayAttributeData& MaxAttribute,
 		float NewMaxValue,
 		const FGameplayAttribute& AffectdAttributeProperty) const;
+
+	UFUNCTION()
+	virtual void OnRep_AttackWeight(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldValue);

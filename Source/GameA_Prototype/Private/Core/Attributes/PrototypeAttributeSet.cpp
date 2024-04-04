@@ -80,6 +80,11 @@ void UPrototypeAttributeSet::AdjustAttributeForMaxChanged(
 	}
 }
 
+void UPrototypeAttributeSet::OnRep_AttackWeight(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPrototypeAttributeSet, AttackWeight, OldValue);
+}
+
 void UPrototypeAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPrototypeAttributeSet, Health, OldValue);
