@@ -46,6 +46,16 @@ void UPrototypeGameplayAbility::CommitExecute(const FGameplayAbilitySpecHandle H
 	ApplyAttackWeight(Handle, ActorInfo, ActivationInfo);
 }
 
+bool UPrototypeGameplayAbility::CheckAttackWeightWithTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, FGameplayTagContainer& OptionalRelevantTagsOUT) const
+{
+	return CheckAttackWeight(Handle, &ActorInfo, &OptionalRelevantTagsOUT);
+}
+
+bool UPrototypeGameplayAbility::CheckAttackWeightSimple(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo) const
+{
+	return CheckAttackWeight(Handle, &ActorInfo);
+}
+
 bool UPrototypeGameplayAbility::CheckAttackWeight(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
 	UGameplayEffect* AttackWeightGE = GetAttackWeightGameplayEffect();
@@ -64,7 +74,7 @@ bool UPrototypeGameplayAbility::CheckAttackWeight(const FGameplayAbilitySpecHand
 				return false;
 			}
 
-			// Now access your custom global variable
+			// Now access custom global variable
 			const FGameplayTag& AttackWeightTag = Globals->ActivateFailAttackWeightTag; // Note: using the Tag, not Name
 
 			if (OptionalRelevantTags && AttackWeightTag.IsValid())

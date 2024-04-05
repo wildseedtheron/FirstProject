@@ -25,6 +25,11 @@ public:
 	/** Does the commit atomically (consume resources, do cooldowns, etc) */
 	virtual void CommitExecute(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo);
 
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	bool CheckAttackWeightWithTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, FGameplayTagContainer& OptionalRelevantTagsOUT) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	bool CheckAttackWeightSimple(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo) const;
 	/** Checks attack weight. returns true if target has enough attack weight for the ability. False if not */
 	bool CheckAttackWeight(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const;
 
@@ -56,4 +61,12 @@ protected:
 	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
 	TSubclassOf<class UGameplayEffect> AttackWeightGameplayEffectClass;
+
+	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
+	float AttackWeight;
+
+	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
+	float AttackDuration;
 };
