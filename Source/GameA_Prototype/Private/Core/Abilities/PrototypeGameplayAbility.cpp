@@ -3,6 +3,9 @@
 
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 #include "AbilitySystemLog.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
+#include "Core/Abilities/GPAbilitySystemGlobals.h"
 #include "Core/Actors/PrototypeBaseCharacter.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeGameplayAbility)
@@ -20,6 +23,80 @@ UPrototypeGameplayAbility::UPrototypeGameplayAbility(const FObjectInitializer& O
 	: Super(ObjectInitializer)
 {
 	ActiveCameraMode = nullptr;
+}
+
+bool UPrototypeGameplayAbility::CommitCheck(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, OUT FGameplayTagContainer* OptionalRelevantTags)
+{
+	if (!Super::CommitCheck(Handle, ActorInfo, ActivationInfo, OUT OptionalRelevantTags)) return false;
+
+	UGPAbilitySystemGlobals* AbilitySystemGlobals = Cast<UGPAbilitySystemGlobals>(&UAbilitySystemGlobals::Get());
+
+	if (!AbilitySystemGlobals && !CheckAttackWeight(Handle, ActorInfo, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UPrototypeGameplayAbility::CommitExecute(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	Super::CommitExecute(Handle, ActorInfo, ActivationInfo);
+
+	ApplyAttackWeight(Handle, ActorInfo, ActivationInfo);
+}
+
+bool UPrototypeGameplayAbility::CheckAttackWeight(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
+{
+	UGameplayEffect* AttackWeightGE = GetAttackWeightGameplayEffect();
+	if (AttackWeightGE)
+	{
+		UAbilitySystemComponent* const AbilitySystemComponent = ActorInfo->AbilitySystemComponent.Get();
+		check(AbilitySystemComponent != nullptr);
+		if (!AbilitySystemComponent->CanApplyAttributeModifiers(AttackWeightGE, GetAbilityLevel(Handle, ActorInfo), MakeEffectContext(Handle, ActorInfo)))
+		{
+			// Cast the singleton AbilitySystemGlobals to your custom class
+			UGPAbilitySystemGlobals* Globals = Cast<UGPAbilitySystemGlobals>(&UAbilitySystemGlobals::Get());
+			if (!Globals)
+			{
+				// Handle the error if the cast fails
+				UE_LOG(LogTemp, Warning, TEXT("Failed to cast AbilitySystemGlobals to UGPAbilitySystemGlobals."));
+				return false;
+			}
+
+			// Now access your custom global variable
+			const FGameplayTag& AttackWeightTag = Globals->ActivateFailAttackWeightTag; // Note: using the Tag, not Name
+
+			if (OptionalRelevantTags && AttackWeightTag.IsValid())
+			{
+				OptionalRelevantTags->AddTag(AttackWeightTag);
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+
+void UPrototypeGameplayAbility::ApplyAttackWeight(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
+	UGameplayEffect* AttackWeightGE = GetAttackWeightGameplayEffect();
+	if (AttackWeightGE)
+	{
+		ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AttackWeightGE, GetAbilityLevel(Handle, ActorInfo));
+	}
+}
+
+UGameplayEffect* UPrototypeGameplayAbility::GetAttackWeightGameplayEffect() const
+{
+	if (AttackWeightGameplayEffectClass)
+	{
+		return AttackWeightGameplayEffectClass->GetDefaultObject<UGameplayEffect>();
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void UPrototypeGameplayAbility::SetCameraMode(TSubclassOf<UGPCameraMode> CameraMode)
