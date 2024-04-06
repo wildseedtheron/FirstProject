@@ -25,6 +25,10 @@ public:
 	/** Does the commit atomically (consume resources, do cooldowns, etc) */
 	virtual void CommitExecute(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo);
 
+	/** Perform a preliminary check if the ability's attack weight can be applied. */
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	bool CanApplyAbility(const AActor* SourceActor, const AActor* TargetActor) const;
+
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	bool CheckAttackWeightWithTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, FGameplayTagContainer& OptionalRelevantTagsOUT) const;
 
@@ -68,5 +72,5 @@ protected:
 
 	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
-	float AttackDuration;
+	FSetByCallerFloat AttackDuration;
 };

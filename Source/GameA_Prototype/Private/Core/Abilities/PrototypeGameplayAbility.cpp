@@ -23,6 +23,9 @@ UPrototypeGameplayAbility::UPrototypeGameplayAbility(const FObjectInitializer& O
 	: Super(ObjectInitializer)
 {
 	ActiveCameraMode = nullptr;
+
+	//GetAttackWeightGameplayEffect()->DurationMagnitude = FGameplayEffectModifierMagnitude(AttackDuration);
+	//GetAttackWeightGameplayEffect()-> = FGameplayEffectModifierMagnitude(AttackDuration);
 }
 
 bool UPrototypeGameplayAbility::CommitCheck(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, OUT FGameplayTagContainer* OptionalRelevantTags)
@@ -44,6 +47,22 @@ void UPrototypeGameplayAbility::CommitExecute(const FGameplayAbilitySpecHandle H
 	Super::CommitExecute(Handle, ActorInfo, ActivationInfo);
 
 	ApplyAttackWeight(Handle, ActorInfo, ActivationInfo);
+}
+
+bool UPrototypeGameplayAbility::CanApplyAbility(const AActor* SourceActor, const AActor* TargetActor) const
+{
+	UGameplayEffect* AttackWeightGE = GetAttackWeightGameplayEffect();
+
+	UAbilitySystemComponent* SourceAbilitySystemComponent = SourceActor->FindComponentByClass<UAbilitySystemComponent>();
+	FGameplayAbilityActorInfo* SourceActorInfo = SourceAbilitySystemComponent->AbilityActorInfo.Get();
+
+	UAbilitySystemComponent* TargetAbilitySystemComponent = TargetActor->FindComponentByClass<UAbilitySystemComponent>();
+	if (!TargetAbilitySystemComponent) return false;
+
+	float EffectLevel = 1.0f; // The level of the effect, adjust as needed
+	FGameplayAbilitySpecHandle Handle = GetCurrentAbilitySpecHandle();
+	bool bCanApply = TargetAbilitySystemComponent->CanApplyAttributeModifiers(AttackWeightGE, 0, MakeEffectContext(Handle, SourceActorInfo));
+	return bCanApply;
 }
 
 bool UPrototypeGameplayAbility::CheckAttackWeightWithTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, FGameplayTagContainer& OptionalRelevantTagsOUT) const
@@ -93,6 +112,9 @@ void UPrototypeGameplayAbility::ApplyAttackWeight(const FGameplayAbilitySpecHand
 	UGameplayEffect* AttackWeightGE = GetAttackWeightGameplayEffect();
 	if (AttackWeightGE)
 	{
+		//GetAbilityFromHan
+		//
+		//ApplyGameplayEffectToTarget(Handle, ActorInfo, ActivationInfo, AbilityTargetDataFromActor(ActorInfo->OwnerActor.Get()), GameplayEffectClass, GameplayEffectLevel, Stacks);
 		ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AttackWeightGE, GetAbilityLevel(Handle, ActorInfo));
 	}
 }
