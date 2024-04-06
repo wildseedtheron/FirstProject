@@ -70,35 +70,78 @@ void UPrototypeAbilitySystemComponent::ReceiveDamage(UPrototypeAbilitySystemComp
 	}
 }
 
-bool UPrototypeAbilitySystemComponent::CanApplyAbility(UPrototypeGameplayAbility* Ability, const AActor* SourceActor, const AActor* TargetActor) const
+bool UPrototypeAbilitySystemComponent::CanApplyAbility(UPrototypeGameplayAbility* Ability, UAbilitySystemComponent* TargetASC) const
 {
-	UGameplayEffect* AttackWeightGE = Ability->GetAttackWeightGameplayEffect();
+	TSubclassOf<UGameplayEffect> AttackWeightGE = Ability->GetAttackWeightGameplayEffect();
 	if (!AttackWeightGE) return false;
 
-	UAbilitySystemComponent* SourceAbilitySystemComponent = SourceActor->FindComponentByClass<UAbilitySystemComponent>();
-	if (!SourceAbilitySystemComponent) return false;
+	if (!TargetASC) return false;
 
-	FGameplayAbilityActorInfo* SourceActorInfo = SourceAbilitySystemComponent->AbilityActorInfo.Get();
-	if (!SourceActorInfo) return false;
+	FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
 
-	UAbilitySystemComponent* TargetAbilitySystemComponent = TargetActor->FindComponentByClass<UAbilitySystemComponent>();
-	if (!TargetAbilitySystemComponent) return false;
+	bool bCanApply = TargetASC->CanApplyAttributeModifiers(AttackWeightGE.GetDefaultObject(), 1.0f, ContextHandle);
 
-	float EffectLevel = 1.0f; // The level of the effect, adjust as needed
+	return bCanApply;
+}
 
-	FGameplayEffectContextHandle ContextHandle = SourceAbilitySystemComponent->MakeEffectContext();
-
-	bool bCanApply = TargetAbilitySystemComponent->CanApplyAttributeModifiers(AttackWeightGE, 0, ContextHandle);
-
-	if (bCanApply)
+bool UPrototypeAbilitySystemComponent::TryApplyAbility(UPrototypeGameplayAbility* Ability, UAbilitySystemComponent* TargetASC) const
+{
+	UAbilitySystemComponent* asc = GetOwner()->FindComponentByClass<UAbilitySystemComponent>();
+	if (!asc)
 	{
-		FGameplayEffectSpecHandle SpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(AttackWeightGE->GetClass(), 1.0f, ContextHandle);
+		UE_LOG(LogTemp, Warning, TEXT("Owning system component know found: %s"), *Ability->GetName());
+		return false;
+	}
 
-		if (SpecHandle.IsValid())
+	TSubclassOf<UGameplayEffect> AttackWeightGE = Ability->GetAttackWeightGameplayEffect();
+	if (!AttackWeightGE)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Attack weight effect unknown : %s"), *Ability->GetName());
+		return false;
+	}
+
+	if (!TargetASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target unknown : %s"), *Ability->GetName());
+		return false;
+	}
+
+	if (Cast<UPrototypeAbilitySystemComponent>(asc)->CanApplyAbility(Ability, TargetASC))
+	{
+		FGameplayEffectContextHandle ContextHandle = asc->MakeEffectContext();
+		ContextHandle.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle SpecHandle =
+			asc->MakeOutgoingSpec(
+				*AttackWeightGE,
+				1,
+				ContextHandle
+			);
+
+		//FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(AttackWeightGE->GetClass(), 1.0f, ContextHandle);
+
+		if (SpecHandle.Data.IsValid())
 		{
-			SourceAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetAbilitySystemComponent);
-			return true;
+			FActiveGameplayEffectHandle ReturnHandle = asc->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetASC, asc->GetPredictionKeyForNewAction());
+			//FActiveGameplayEffectHandle ReturnHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get(), asc->GetPredictionKeyForNewAction());
+			//FActiveGameplayEffectHandle ActiveGameplayEffectHandle = asc->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetASC);
+			if (ReturnHandle.WasSuccessfullyApplied())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Attack weight applied successfully : %s"), *Ability->GetName());
+				return true;
+			}
+
+			return false;
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to create specHandle : %s"), *Ability->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ability attack weight cannont be applied : %s"), *Ability->GetName());
 	}
 
 	return false;
