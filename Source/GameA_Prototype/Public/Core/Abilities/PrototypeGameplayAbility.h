@@ -25,10 +25,6 @@ public:
 	/** Does the commit atomically (consume resources, do cooldowns, etc) */
 	virtual void CommitExecute(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo);
 
-	/** Perform a preliminary check if the ability's attack weight can be applied. */
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	bool CanApplyAbility(const AActor* SourceActor, const AActor* TargetActor) const;
-
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	bool CheckAttackWeightWithTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, FGameplayTagContainer& OptionalRelevantTagsOUT) const;
 
@@ -42,6 +38,10 @@ public:
 
 	/** Returns the gameplay effect used to apply cost */
 	virtual UGameplayEffect* GetAttackWeightGameplayEffect() const;
+
+	/** Apply chosen ability weight to target. */
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	float GetAbilityAttackWeight() const;
 
 	// Sets the ability's camera mode.
 	UFUNCTION(BlueprintCallable, Category = "Ability")

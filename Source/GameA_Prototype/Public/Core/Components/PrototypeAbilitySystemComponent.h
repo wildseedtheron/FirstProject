@@ -28,6 +28,10 @@ public:
 
 	virtual void ReceiveDamage(UPrototypeAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
 
+	/** Perform a preliminary check if the ability's attack weight can be applied. */
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	bool CanApplyAbility(UPrototypeGameplayAbility* Ability, const AActor* SourceActor, const AActor* TargetActor) const;
+
 protected:
 	// Handles to abilities that had their input pressed this frame.
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
