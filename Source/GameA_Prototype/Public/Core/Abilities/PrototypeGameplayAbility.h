@@ -8,6 +8,18 @@
 #include "Core/Camera/GPCameraMode.h"
 #include "PrototypeGameplayAbility.generated.h"
 
+USTRUCT(BlueprintType, meta = (FullyExpand = true))
+struct GAMEA_PROTOTYPE_API FCallerMagnitude
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
+	float Magnitude;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
+	FGameplayTag Tag;
+};
 /**
  * 
  */
@@ -43,16 +55,15 @@ public:
 	// Current camera mode set by the ability.
 	TSubclassOf<UGPCameraMode> ActiveCameraMode;
 
-protected:
 	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
 	TSubclassOf<UGameplayEffect> AttackWeightGameplayEffectClass;
 
 	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
-	float AttackWeight;
+	FCallerMagnitude AttackWeight;
 
 	/** This GameplayEffect represents the attack weight of the ability. It will be applied when the ability is committed. */
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Weight")
-	FSetByCallerFloat AttackDuration;
+	FCallerMagnitude AttackDuration;
 };

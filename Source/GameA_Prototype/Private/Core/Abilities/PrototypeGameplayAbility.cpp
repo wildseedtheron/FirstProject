@@ -33,7 +33,7 @@ TSubclassOf<UGameplayEffect> UPrototypeGameplayAbility::GetAttackWeightGameplayE
 
 float UPrototypeGameplayAbility::GetAbilityAttackWeight() const
 {
-	return AttackWeight;
+	return AttackWeight.Magnitude;
 }
 
 void UPrototypeGameplayAbility::SetCameraMode(TSubclassOf<UGPCameraMode> CameraMode)
