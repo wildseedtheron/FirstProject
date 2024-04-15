@@ -8,6 +8,7 @@
 #include "Core/Components/GPEnhancedInputComponent.h"
 #include "Logging/LogMacros.h"
 #include "Core/Components/PrototypeAbilitySystemComponent.h"
+#include "Core/Abilities/GPGameplayAbilitySet.h"
 #include "Core/Abilities/PrototypeGameplayAbility.h"
 #include "Core/Attributes/PrototypeAttributeSet.h"
 #include "Core/Tags/PrototypeGameplayTags.h"
@@ -88,18 +89,12 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 
 	check(AbilitySystemComponent);
 
-	// Grant Abilities only on the server.
-	for (TSubclassOf<UPrototypeGameplayAbility>& StartupAbility : GameplayAbilities)
+	for (TObjectPtr<UGPGameplayAbilitySet>& StartupAbility : GameplayAbilitySets)
 	{
-		AbilitySystemComponent->GiveAbility(
-			FGameplayAbilitySpec(
-				StartupAbility,
-				StartupAbility.GetDefaultObject()->GetAbilityLevel(),
-				GetTypeHash(StartupAbility.GetDefaultObject()->AbilityInputID = *InputConfig->FindGameplayTagForAbility(StartupAbility, true)),
-				this
-			));
-		UE_LOG(LogTemp, Warning, TEXT("Ability Name : %s"), *StartupAbility.GetDefaultObject()->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("InputAction bound to InputAction %s"), *InputConfig->FindGameplayTagForAbility(StartupAbility, true)->ToString());
+		if (StartupAbility)
+		{
+			StartupAbility->GiveToAbilitySystem(AbilitySystemComponent, &GrantedHandles, nullptr);
+		}
 	}
 
 	// Now Apply Passives
@@ -150,19 +145,22 @@ void APrototypeBaseCharacter::AddCharacterAbilityWithInput(TSubclassOf<UPrototyp
 void APrototypeBaseCharacter::RemoveCharacterGameplayAbilities()
 {
 	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent) return;
+	
+	GrantedHandles.TakeFromAbilitySystem(AbilitySystemComponent);
 
-	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-	for (const FGameplayAbilitySpec& Spec : AbilitySystemComponent->GetActivatableAbilities())
-	{
-		if ((Spec.SourceObject == this) && GameplayAbilities.Contains(Spec.Ability->GetClass())) {
-			AbilitiesToRemove.Add(Spec.Handle);
-		}
-	}
+	//TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
 
-	for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
-	{
-		AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
-	}
+	//for (const FGameplayAbilitySpec& Spec : AbilitySystemComponent->GetActivatableAbilities())
+	//{
+	//	if ((Spec.SourceObject == this) && GameplayAbilities.Contains(Spec.Ability->GetClass())) {
+	//		AbilitiesToRemove.Add(Spec.Handle);
+	//	}
+	//}
+
+	//for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
+	//{
+	//	AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
+	//}
 }
 
 void APrototypeBaseCharacter::RemoveCharacterGameplayAbility(const FGameplayAbilitySpecHandle& AbilitySpecHandle)

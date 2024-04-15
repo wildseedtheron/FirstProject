@@ -8,6 +8,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
 #include "EnhancedInputSubsystems.h"
+#include "Core/Abilities/GPGameplayAbilitySet.h"
 #include "PrototypeBaseCharacter.generated.h"
 
 class UPrototypeAbilitySystemComponent;
@@ -100,6 +101,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TArray<TSubclassOf<UPrototypeGameplayAbility>> GameplayAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	TArray<TObjectPtr<UGPGameplayAbilitySet>> GameplayAbilitySets;
+
+	FGPAbilitySet_GrantedHandles GrantedHandles;
 
 	UPROPERTY()
 	uint8 bAbilitiesInitialized : 1;
