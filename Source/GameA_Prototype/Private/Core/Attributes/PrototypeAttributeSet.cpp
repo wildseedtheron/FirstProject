@@ -13,7 +13,9 @@ void UPrototypeAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UPrototypeAttributeSet, MaxHealth);
 	DOREPLIFETIME(UPrototypeAttributeSet, Health);
+	DOREPLIFETIME(UPrototypeAttributeSet, AttackWeight);
 }
 
 void UPrototypeAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -50,12 +52,21 @@ void UPrototypeAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModC
 		TargetCharacter = Cast<APrototypeBaseCharacter>(TargetActor);
 	}
 
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	if (TargetCharacter)
 	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
-
-		if (TargetCharacter)
+		if (Data.EvaluatedData.Attribute == GetAttackWeightAttribute())
 		{
+			TargetCharacter->HandleAttackWeightChanged(DeltaValue, SourceTags);
+		}
+
+		if (Data.EvaluatedData.Attribute == GetMaxHealthAttribute())
+		{
+			TargetCharacter->HandleMaxHealthChanged(DeltaValue, SourceTags);
+		}
+
+		if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+		{
+			SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 			TargetCharacter->HandleHealthChanged(DeltaValue, SourceTags);
 		}
 	}

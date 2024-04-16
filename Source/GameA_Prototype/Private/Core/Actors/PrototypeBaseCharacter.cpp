@@ -10,9 +10,11 @@
 #include "Core/Components/PrototypeAbilitySystemComponent.h"
 #include "Core/Abilities/GPGameplayAbilitySet.h"
 #include "Core/Abilities/PrototypeGameplayAbility.h"
+#include "Core/Attributes/GPPlayerAttributeSet.h"
 #include "Core/Attributes/PrototypeAttributeSet.h"
 #include "Core/Tags/PrototypeGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayEffectExtension.h"
 #include <Kismet/KismetSystemLibrary.h>
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PrototypeBaseCharacter)
@@ -41,15 +43,38 @@ APrototypeBaseCharacter::APrototypeBaseCharacter(const class FObjectInitializer&
 		AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	}
 
-	Attributes = CreateDefaultSubobject<UPrototypeAttributeSet>(TEXT("Attributes"));
+	Attributes = DefaultAttributes.GetDefaultObject();
 }
 
 // Called when the game starts or when spawned
 void APrototypeBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsValid(AbilitySystemComponent)) {
-		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnHealthChangedInternal);
+
+	if (!IsValid(AbilitySystemComponent)) return;
+
+	UPrototypeAttributeSet* prototypeAttributes = Cast<UPrototypeAttributeSet>(Attributes);
+
+	if (prototypeAttributes)
+	{
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(prototypeAttributes->GetAttackWeightAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnAttackWeightChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(prototypeAttributes->GetMaxHealthAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnMaxHealthChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(prototypeAttributes->GetHealthAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnHealthChangedInternal);
+	}
+
+	UGPPlayerAttributeSet* playerAttributes = Cast<UGPPlayerAttributeSet>(Attributes);
+
+	if (playerAttributes)
+	{
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetStrengthAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnStrengthChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetAgilityAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnAgilityChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetVitalityAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnVitalityChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetIntelligenceAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnIntelligenceChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetDexterityAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnDexterityChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetLuckAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnLuckChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetPrecisionAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnPrecisionChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetReflexAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnReflexChangedInternal);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(playerAttributes->GetXPAttribute()).AddUObject(this, &APrototypeBaseCharacter::OnXPChangedInternal);
 	}
 }
 
@@ -174,10 +199,11 @@ void APrototypeBaseCharacter::InitializeAttributes()
 
 void APrototypeBaseCharacter::InitializeHealth(float health)
 {
-	if (Attributes)
+	UPrototypeAttributeSet* prototypeAttributes = Cast<UPrototypeAttributeSet>(Attributes);
+	if (prototypeAttributes)
 	{
-		Attributes->InitHealth(health);
-		Attributes->InitMaxHealth(health);
+		prototypeAttributes->InitHealth(health);
+		prototypeAttributes->InitMaxHealth(health);
 		return;
 	}
 
@@ -205,9 +231,10 @@ void APrototypeBaseCharacter::CancelAbilityWithTags(const FGameplayTagContainer 
 
 float APrototypeBaseCharacter::GetHealth() const
 {
-	if (Attributes)
+	UPrototypeAttributeSet* prototypeAttributes = Cast<UPrototypeAttributeSet>(Attributes);
+	if (prototypeAttributes)
 	{
-		return Attributes->GetHealth();
+		return prototypeAttributes->GetHealth();
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Attribute Set Not Initialized!"));
@@ -216,9 +243,10 @@ float APrototypeBaseCharacter::GetHealth() const
 
 float APrototypeBaseCharacter::GetMaxHealth() const
 {
-	if (Attributes)
+	UPrototypeAttributeSet* prototypeAttributes = Cast<UPrototypeAttributeSet>(Attributes);
+	if (prototypeAttributes)
 	{
-		return Attributes->GetMaxHealth();
+		return prototypeAttributes->GetMaxHealth();
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Attribute Set Not Initialized!"));
@@ -329,6 +357,22 @@ void APrototypeBaseCharacter::HandleDamage(float DamageAmount, const FHitResult&
 	OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorCharacter, DamageOwner);
 }
 
+void APrototypeBaseCharacter::HandleAttackWeightChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnAttackWeightChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleMaxHealthChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnMaxHealthChanged(DeltaValue, EventTags);
+	}
+}
+
 void APrototypeBaseCharacter::HandleHealthChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
 {
 	if (bAbilitiesInitialized)
@@ -337,8 +381,158 @@ void APrototypeBaseCharacter::HandleHealthChanged(float DeltaValue, const FGamep
 	}
 }
 
-void APrototypeBaseCharacter::OnHealthChangedInternal(const FOnAttributeChangeData& Data) {
+void APrototypeBaseCharacter::HandleStrengthChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnStrengthChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleAgilityChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnAgilityhChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleVitalityChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnVitalityChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleIntelligenceChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnIntelligenceChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleDexterityChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnDexterityChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleLuckChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnLuckChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandlePrecisionChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnPrecisionChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleReflexChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnReflexChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::HandleXPChanged(float DeltaValue, const FGameplayTagContainer& EventTags)
+{
+	if (bAbilitiesInitialized)
+	{
+		OnXPChanged(DeltaValue, EventTags);
+	}
+}
+
+void APrototypeBaseCharacter::OnAttackWeightChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnAttackWeightChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnMaxHealthChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnMaxHealthChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnHealthChangedInternal(const FOnAttributeChangeData& Data) 
+{
 	OnHealthChanged1(Data.OldValue, Data.NewValue);
+}
+
+void APrototypeBaseCharacter::OnStrengthChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnStrengthChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnAgilityChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnAgilityhChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnVitalityChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnVitalityChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnIntelligenceChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnIntelligenceChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnDexterityChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnDexterityChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnLuckChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnLuckChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnPrecisionChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnPrecisionChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnReflexChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnReflexChanged(Data.OldValue, SourceTags);
+}
+
+void APrototypeBaseCharacter::OnXPChangedInternal(const FOnAttributeChangeData& Data)
+{
+	const FGameplayEffectModCallbackData& data = *Data.GEModData;
+	const FGameplayTagContainer& SourceTags = *data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
+	OnXPChanged(Data.OldValue, SourceTags);
 }
 
 void APrototypeBaseCharacter::Input_Move(const FInputActionValue& InputActionValue)

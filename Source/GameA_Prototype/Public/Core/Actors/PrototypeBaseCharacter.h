@@ -110,6 +110,9 @@ protected:
 	UPROPERTY()
 	uint8 bAbilitiesInitialized : 1;
 
+public:
+
+
 	/// <summary>
 	/// Called when character takes damage, which may have killed them.
 	/// </summary>
@@ -132,13 +135,91 @@ protected:
 	void OnHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged1(float oldValue, float newValue);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMaxHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAttackWeightChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnStrengthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAgilityhChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnVitalityChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnIntelligenceChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDexterityChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnLuckChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPrecisionChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnReflexChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnXPChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	void OnAttackWeightChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle AttackWeightChangedDelegateHandle;
+
+	void OnMaxHealthChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle MaxHealthChangedDelegateHandle;
+
 	void OnHealthChangedInternal(const FOnAttributeChangeData& Data);
 	FDelegateHandle HealthChangedDelegateHandle;
+
+	void OnStrengthChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle StrengthChangedDelegateHandle;
+
+	void OnAgilityChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle AgilityChangedDelegateHandle;
+
+	void OnVitalityChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle VitalityChangedDelegateHandle;
+
+	void OnIntelligenceChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle IntelligenceChangedDelegateHandle;
+
+	void OnDexterityChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle DexterityChangedDelegateHandle;
+
+	void OnLuckChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle LuckChangedDelegateHandle;
+
+	void OnPrecisionChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle PrecisionChangedDelegateHandle;
+
+	void OnReflexChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle ReflexChangedDelegateHandle;
+
+	void OnXPChangedInternal(const FOnAttributeChangeData& Data);
+	FDelegateHandle XPChangedDelegateHandle;
 
 	virtual void HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
 		APrototypeBaseCharacter* InstigatorCharacter, AActor* DamageOwner);
 
+	virtual void HandleAttackWeightChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleMaxHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
 	virtual void HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleStrengthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleAgilityChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleVitalityChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleIntelligenceChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleDexterityChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleLuckChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandlePrecisionChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleReflexChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	virtual void HandleXPChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
 	//virtual void HandleFireWeaponPressed();
 
@@ -154,10 +235,10 @@ public:
 	TObjectPtr<UPrototypeAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
-	TObjectPtr<UPrototypeAttributeSet> Attributes;
+	TObjectPtr<UAttributeSet> Attributes;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
-	TSubclassOf<UGameplayEffect> DefaultAttributes;
+	TSubclassOf<UAttributeSet> DefaultAttributes;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, category = "Abilities")
 	TArray<TSubclassOf<UGameplayEffect>> StartupEffects;
