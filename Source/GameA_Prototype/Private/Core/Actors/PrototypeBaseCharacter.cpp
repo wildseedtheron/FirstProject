@@ -114,11 +114,11 @@ void APrototypeBaseCharacter::AddStartupGameplayAbilities()
 
 	check(AbilitySystemComponent);
 
-	for (TObjectPtr<UGPGameplayAbilitySet>& StartupAbility : GameplayAbilitySets)
+	for (TObjectPtr<UGPGameplayAbilitySet>& AbilitySet : GameplayAbilitySets)
 	{
-		if (StartupAbility)
+		if (AbilitySet)
 		{
-			StartupAbility->GiveToAbilitySystem(AbilitySystemComponent, &GrantedHandles, nullptr);
+			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, &AbilitySet->GrantedHandles, nullptr);
 		}
 	}
 

@@ -31,7 +31,7 @@ void FGPAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)
 	GrantedAttributeSets.Add(Set);
 }
 
-void FGPAbilitySet_GrantedHandles::TakeFromAbilitySystem(UPrototypeAbilitySystemComponent* TargetASC)
+void FGPAbilitySet_GrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* TargetASC)
 {
 	check(TargetASC);
 
@@ -72,7 +72,12 @@ UGPGameplayAbilitySet::UGPGameplayAbilitySet(const FObjectInitializer& ObjectIni
 {
 }
 
-void UGPGameplayAbilitySet::GiveToAbilitySystem(UPrototypeAbilitySystemComponent* TargetASC, FGPAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject) const
+void UGPGameplayAbilitySet::K2_GiveToAbilitySystem(UAbilitySystemComponent* TargetASC, FGPAbilitySet_GrantedHandles& GrantedHandlesOUT) const
+{
+	GiveToAbilitySystem(TargetASC, &GrantedHandlesOUT);
+}
+
+void UGPGameplayAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* TargetASC, FGPAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject) const
 {
 	check(TargetASC);
 
@@ -168,4 +173,14 @@ void UGPGameplayAbilitySet::GiveToAbilitySystem(UPrototypeAbilitySystemComponent
 			OutGrantedHandles->AddAttributeSet(NewSet);
 		}
 	}
+}
+
+void UGPGameplayAbilitySet::TakeFromAbilitySystem(UAbilitySystemComponent* TargetASC)
+{
+	GrantedHandles.TakeFromAbilitySystem(TargetASC);
+}
+
+void UGPGameplayAbilitySet::AddAbilitySpecHandle(FGameplayAbilitySpecHandle AbilitySpecHandle)
+{
+	GrantedHandles.AddAbilitySpecHandle(AbilitySpecHandle);
 }

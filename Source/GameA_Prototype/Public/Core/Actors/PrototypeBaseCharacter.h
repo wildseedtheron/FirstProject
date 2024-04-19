@@ -105,6 +105,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TArray<TObjectPtr<UGPGameplayAbilitySet>> GameplayAbilitySets;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	FGPAbilitySet_GrantedHandles GrantedHandles;
 
 	UPROPERTY()

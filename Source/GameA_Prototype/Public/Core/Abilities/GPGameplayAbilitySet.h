@@ -97,7 +97,7 @@ public:
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 	void AddAttributeSet(UAttributeSet* Set);
 
-	void TakeFromAbilitySystem(UPrototypeAbilitySystemComponent* TargetASC);
+	void TakeFromAbilitySystem(UAbilitySystemComponent* TargetASC);
 
 protected:
 
@@ -128,7 +128,16 @@ public:
 
 	// Grants the ability set to the specified ability system component.
 	// The returned handles can be used later to take away anything that was granted.
-	void GiveToAbilitySystem(UPrototypeAbilitySystemComponent* LyraASC, FGPAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
+	UFUNCTION(BlueprintCallable, Category = "Abilities", DisplayName = "GiveToAbilitySystem", meta = (ScriptName = "GiveToAbilitySystem"))
+	void K2_GiveToAbilitySystem(UAbilitySystemComponent* TargetASC, FGPAbilitySet_GrantedHandles& GrantedHandlesOUT) const;
+
+	void GiveToAbilitySystem(UAbilitySystemComponent* TargetASC, FGPAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void TakeFromAbilitySystem(UAbilitySystemComponent* TargetASC);
+
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	void AddAbilitySpecHandle(FGameplayAbilitySpecHandle AbilitySpecHandle);
 
 protected:
 
@@ -143,4 +152,9 @@ protected:
 	// Attribute sets to grant when this ability set is granted.
 	UPROPERTY(EditDefaultsOnly, Category = "Attribute Sets", meta = (TitleProperty = AttributeSet))
 	TArray<FGPAbilitySet_AttributeSet> GrantedAttributes;
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	FGPAbilitySet_GrantedHandles GrantedHandles;
 };
